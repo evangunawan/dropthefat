@@ -23,7 +23,12 @@ export default class App extends React.Component {
   render() {
     return (
       <ThemeProvider theme={mainTheme}>
-        <Box bgcolor='background.default' color='text.primary' id='root-box'>
+        <Box
+          bgcolor='background.default'
+          color='text.primary'
+          style={{ width: '100%', height: '100vh' }}
+          id='root-box'
+        >
           <Routes />
         </Box>
       </ThemeProvider>

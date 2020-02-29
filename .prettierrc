@@ -5,5 +5,5 @@
   "printWidth": 90,
   "jsxSingleQuote": true,
   "trailingComma": "es5",
-  "arrowParens": "always",
+  "arrowParens": "always"
 }
