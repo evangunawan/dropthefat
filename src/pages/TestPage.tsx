@@ -1,9 +1,18 @@
 import * as React from 'react';
-import { Button } from '@material-ui/core/';
+import { Button, makeStyles } from '@material-ui/core/';
+
+const styles = makeStyles({
+  root: {
+    width: '100%',
+    height: 100,
+    backgroundColor: 'blue',
+  },
+});
 
 const TestPage = () => {
+  const classes = styles();
   return (
-    <div>
+    <div className={classes.root}>
       <Button variant='contained' color='primary'>
         Hello
       </Button>
