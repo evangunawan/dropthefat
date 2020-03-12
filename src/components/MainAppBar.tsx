@@ -9,9 +9,6 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  makeStyles,
-  Theme,
-  createStyles,
   Box,
 } from '@material-ui/core';
 import { Menu, Receipt, RestaurantMenu } from '@material-ui/icons';

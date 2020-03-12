@@ -11,9 +11,7 @@ const Home = () => {
   return (
     <div>
       <MainAppBar />
-      <Container>
-        <Container></Container>
-      </Container>
+      <Container></Container>
     </div>
   );
 };
