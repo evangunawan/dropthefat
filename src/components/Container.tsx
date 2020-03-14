@@ -13,7 +13,7 @@ const Container = (props: Props) => {
     margin: '0 auto',
   };
 
-  return <Box style={containerStyle}>{props.children}</Box>;
+  return <Box style={containerStyle}>{props.children || null}</Box>;
 };
 
 export default Container;
