@@ -9,7 +9,7 @@ import {
   Divider,
 } from '@material-ui/core';
 import { Description, RestaurantMenu, Home } from '@material-ui/icons';
-import { Route, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 interface DrawerProps {
   open: boolean;

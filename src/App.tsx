@@ -1,12 +1,11 @@
 import * as React from 'react';
-import Routes from './config/MainRoutes';
 import firebase from 'firebase';
 import firebaseConfig from './config/firebase';
 import { ThemeProvider, Box } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { blue, pink } from '@material-ui/core/colors';
 import MainAppBar from './components/AppBar/MainAppBar';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import MainRoutes from './config/MainRoutes';
 
 //Firebase initialization

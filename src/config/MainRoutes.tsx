@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from '../pages/Home';
-import TestPage from '../pages/TestPage';
-import OrderPage from '../pages/OrderPage';
+import OrderPage from '../pages/Order/OrderPage';
+import CreateOrder from '../pages/Order/CreateOrder';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -11,7 +12,7 @@ export default class MainRoutes extends React.Component {
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/order' component={OrderPage} />
-          <Route path='/test' component={TestPage} />
+          <Route exact path='/order/create' component={CreateOrder} />
         </Switch>
       </div>
     );
