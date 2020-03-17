@@ -3,7 +3,6 @@ import firebase from 'firebase';
 import '@firebase/firestore';
 
 import {
-  Button,
   TableContainer,
   Table,
   TableBody,
@@ -32,7 +31,7 @@ export class MenuPage extends React.Component<{}, MenuState> {
     const db = firebase.firestore();
     let result = null;
     await db
-      .collection('Menu')
+      .collection('menu')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -44,6 +43,16 @@ export class MenuPage extends React.Component<{}, MenuState> {
     this.setState({ ready: true });
   }
 
+  renderItemType(menuType: String) {
+    if (menuType == 'main-course') {
+      return 'Main Course';
+    } else if (menuType == 'drink') {
+      return 'Drink';
+    } else if (menuType == 'dessert') {
+      return 'Dessert';
+    }
+  }
+
   render() {
     if (!this.state.ready) {
       return <p>Loading</p>;
@@ -53,7 +62,7 @@ export class MenuPage extends React.Component<{}, MenuState> {
       return (
         <TableRow key={key}>
           <TableCell align='left'>{item.name}</TableCell>
-          <TableCell align='left'>{item.type}</TableCell>
+          <TableCell align='left'>{this.renderItemType(item.type)}</TableCell>
           <TableCell align='left'>{item.price}</TableCell>
         </TableRow>
       );
