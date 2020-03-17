@@ -58,7 +58,7 @@ const MainDrawer = (props: DrawerProps) => {
           />
           <DrawerItem
             text='Food Menu'
-            link='/food'
+            link='/menu'
             icon={<RestaurantMenu />}
             onLink={props.onClose}
           />

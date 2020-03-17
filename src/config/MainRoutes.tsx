@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from '../pages/Home';
-import TestPage from '../pages/TestPage';
 import OrderPage from '../pages/OrderPage';
+import { MenuPage } from '../pages/MenuPage';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -11,7 +11,7 @@ export default class MainRoutes extends React.Component {
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/order' component={OrderPage} />
-          <Route path='/test' component={TestPage} />
+          <Route exact path='/menu' component={MenuPage} />
         </Switch>
       </div>
     );
