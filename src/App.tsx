@@ -23,7 +23,6 @@ const mainTheme = createMuiTheme({
     fontFamily: ['-apple-system', 'Open Sans', 'sans-serif'].join(','),
   },
 });
-
 export default class App extends React.Component {
   render() {
     return (
