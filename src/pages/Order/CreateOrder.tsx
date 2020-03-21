@@ -11,14 +11,19 @@ import {
   TableBody,
   TableCell,
   Button,
+  IconButton,
 } from '@material-ui/core';
+import { Delete } from '@material-ui/icons';
 import { Menu } from '../../models/Menu';
 import AddMenuModal from './AddMenuModal';
 import firebase from 'firebase';
 import '@firebase/firestore';
+import { MenuOrder } from '../../models/MenuOrder';
 
 interface TableProps {
-  items: Menu[];
+  orders: MenuOrder[];
+  onDelete(item: MenuOrder): any;
+  onQtyChange(ev: any, item: MenuOrder): any;
 }
 
 const MenuTable = (props: TableProps) => {
@@ -29,23 +34,53 @@ const MenuTable = (props: TableProps) => {
     padding: '16px',
   };
 
-  const renderMenuItems = (items: Menu[]) => {
+  const deleteItem = (item: MenuOrder) => {
+    props.onDelete(item);
+  };
+
+  const handleQuantityChange = (ev: any, item: MenuOrder) => {
+    props.onQtyChange(ev, item);
+  };
+
+  const renderPrice = (item: MenuOrder) => {
+    return item.quantity * item.menu.price;
+  };
+
+  const renderMenuItems = (items: MenuOrder[]) => {
     return items.map((item, k) => {
       return (
         <TableRow key={k}>
-          <TableCell>{item.name}</TableCell>
-          <TableCell>{item.type}</TableCell>
-          <TableCell>{item.price}</TableCell>
+          <TableCell>{item.menu.name}</TableCell>
+          <TableCell>{item.menu.type}</TableCell>
+          <TableCell>{item.menu.price}</TableCell>
+          <TableCell>
+            <TextField
+              type='number'
+              style={{ width: 75 }}
+              value={item.quantity}
+              onChange={(ev) => handleQuantityChange(ev, item)}
+            />
+          </TableCell>
+          <TableCell>{renderPrice(item)}</TableCell>
+          <TableCell style={{ width: 60 }}>
+            <IconButton
+              aria-label='Delete'
+              style={{ width: 50 }}
+              onClick={() => deleteItem(item)}
+            >
+              <Delete fontSize='inherit' />
+            </IconButton>
+          </TableCell>
         </TableRow>
       );
     });
   };
 
-  const renderTableBody = (items: Menu[]) => {
+  const renderTableBody = (items: MenuOrder[]) => {
     if (items.length < 1 || items === undefined) {
       return (
         <TableRow style={placeholderStyle}>
-          <TableCell colSpan={3}>
+          <TableCell colSpan={5}>
             <Typography align='center' variant='body2' color='textSecondary'>
               <i>Please add a menu</i>
             </Typography>
@@ -59,23 +94,38 @@ const MenuTable = (props: TableProps) => {
 
   return (
     <TableContainer component={Paper}>
-      <Table>
+      <Table size='small'>
         <TableHead>
           <TableRow>
-            <TableCell>Menu Name</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Price</TableCell>
+            <TableCell>
+              <b>Menu Name</b>
+            </TableCell>
+            <TableCell>
+              <b>Type</b>
+            </TableCell>
+            <TableCell>
+              <b>Price</b>
+            </TableCell>
+            <TableCell>
+              <b>Quantity</b>
+            </TableCell>
+            <TableCell>
+              <b>Total</b>
+            </TableCell>
+            <TableCell>
+              <b>Remove</b>
+            </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{renderTableBody(props.items)}</TableBody>
+        <TableBody>{renderTableBody(props.orders)}</TableBody>
       </Table>
     </TableContainer>
   );
 };
 
 const CreateOrder = () => {
-  const [menuList, setMenuList] = React.useState<Menu[]>([]); //menuList is all loaded menu from db
-  const [items, setItems] = React.useState<Menu[]>([]); //items is the selected menu in the table.
+  const [menuList, setMenuList] = React.useState<Menu[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
+  const [orders, setOrders] = React.useState<MenuOrder[]>([]); //Orders that added in the table.
   const [modalOpen, setModalOpen] = React.useState(false);
   const db = firebase.firestore();
 
@@ -93,7 +143,7 @@ const CreateOrder = () => {
             type: data.type,
             price: data.price as number,
           };
-          console.log(`Adding ${newMenu.name} (${newMenu.id})`);
+          console.log(`Loading ${newMenu.name} (${newMenu.id})`);
           result.push(newMenu);
         });
       });
@@ -123,12 +173,36 @@ const CreateOrder = () => {
 
   //Add selected menu from modal into table (state items)
   const addSelectedMenu = (item: Menu) => {
-    const temp = [...items, item];
-    setItems(temp);
+    // const temp = [...items, item];
+    // setItems(temp);
+    const newOrder: MenuOrder = {
+      menu: item,
+      quantity: 1,
+      total: item.price,
+    };
+    const temp = [...orders, newOrder];
+    setOrders(temp);
+  };
+
+  const removeMenu = (item: MenuOrder) => {
+    const temp = [...orders];
+    const index = temp.indexOf(item);
+    if (index !== -1) {
+      temp.splice(index, 1);
+      setOrders(temp);
+    }
+  };
+
+  const handleQtyChange = (ev: any, item: MenuOrder) => {
+    const temp = [...orders];
+    const index = temp.indexOf(item);
+    temp[index].quantity = ev.target.value as number;
+
+    setOrders(temp);
   };
 
   if (menuList.length < 1) {
-    return <p>Loading</p>;
+    return <p>Loading Menu...</p>;
   }
 
   return (
@@ -143,7 +217,11 @@ const CreateOrder = () => {
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Menu Order
           </Typography>
-          <MenuTable items={items} />
+          <MenuTable
+            orders={orders}
+            onDelete={(item) => removeMenu(item)}
+            onQtyChange={(ev, item) => handleQtyChange(ev, item)}
+          />
           <Button
             variant='contained'
             color='primary'
