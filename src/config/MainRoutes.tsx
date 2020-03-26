@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from '../pages/Home';
 import OrderPage from '../pages/OrderPage';
-import { MenuPage } from '../pages/MenuPage';
+import MenuPage from '../pages/MenuPage';
 
 export default class MainRoutes extends React.Component {
   render() {
