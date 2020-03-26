@@ -10,8 +10,11 @@ import {
   TableBody,
   TableFooter,
   TablePagination,
+  IconButton,
 } from '@material-ui/core';
-import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
+import { List } from '@material-ui/icons';
+import dateFormat from 'dateformat';
+import OrderMenuModal from './OrderMenuModal';
 
 interface TableProps {
   items: Order[];
@@ -21,12 +24,11 @@ const TableHeader = () => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>Order ID</TableCell>
         <TableCell>Time</TableCell>
         <TableCell>PIC</TableCell>
         <TableCell>Items</TableCell>
         <TableCell>Total</TableCell>
-        <TableCell>Menus</TableCell>
+        <TableCell>Actions</TableCell>
       </TableRow>
     </TableHead>
   );
@@ -35,6 +37,21 @@ const TableHeader = () => {
 const OrderTable = (props: TableProps) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [modalOpen, setModalOpen] = React.useState(false);
+
+  const defaultOrder: Order = {
+    id: 'undefined',
+    menuOrders: [],
+    pic: 'null',
+    time: 0,
+    total: 0,
+  };
+  const [modalItem, setModalItem] = React.useState<Order>(defaultOrder);
+  const renderCurrency = (price: number) => {
+    const regex = new RegExp(/\B(?=(\d{3})+(?!\d))/g);
+    const temp = price.toString().replace(regex, ',');
+    return 'Rp' + temp;
+  };
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -49,11 +66,52 @@ const OrderTable = (props: TableProps) => {
     setPage(0);
   };
 
+  const renderTime = (time: number) => {
+    const date = new Date(time);
+    const result = dateFormat(date, 'ddd, dd-mmm-yyyy HH:MM ');
+    return result;
+  };
+
+  const showMenuModal = (item: Order) => {
+    setModalOpen(true);
+    setModalItem(item);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const renderTableBody = (items: Order[]) => {
+    const tableBody = items.map((item: Order, k) => {
+      return (
+        <TableRow key={k}>
+          <TableCell>{renderTime(item.time)}</TableCell>
+          <TableCell>{item.pic}</TableCell>
+          <TableCell>{item.menuOrders.length}</TableCell>
+          <TableCell>{renderCurrency(item.total)}</TableCell>
+          <TableCell>
+            <IconButton
+              aria-label='List'
+              style={{ width: 50 }}
+              onClick={() => {
+                showMenuModal(item);
+              }}
+            >
+              <List />
+            </IconButton>
+          </TableCell>
+        </TableRow>
+      );
+    });
+
+    return tableBody;
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHeader />
-        <TableBody></TableBody>
+        <TableBody>{renderTableBody(props.items)}</TableBody>
         <TableFooter>
           <TableRow>
             <TablePagination
@@ -68,11 +126,17 @@ const OrderTable = (props: TableProps) => {
               }}
               onChangePage={handleChangePage}
               onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
             />
           </TableRow>
         </TableFooter>
       </Table>
+      <OrderMenuModal
+        open={modalOpen}
+        order={modalItem}
+        onClose={() => {
+          handleCloseModal();
+        }}
+      />
     </TableContainer>
   );
 };

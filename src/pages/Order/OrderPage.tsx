@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Container from '../../components/Container';
 import { Order } from '../../models/Order';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import { MenuOrder } from '../../models/MenuOrder';
 import { Menu } from '../../models/Menu';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import EmptyOrderCard from '../../components/OrderPage/EmptyOrderCard';
 import OrderTable from '../../components/OrderPage/OrderTable';
-// import '@firebase/firestore';
 
 const OrderPage = () => {
   const [order, setOrder] = React.useState<Order[]>([]);
