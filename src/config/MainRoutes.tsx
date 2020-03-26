@@ -5,6 +5,7 @@ import Home from '../pages/Home';
 import { MenuPage } from '../pages/MenuPage';
 import LoginAdmin from '../pages/Admin/LoginAdmin';
 import OrderPage from '../pages/Order/OrderPage';
+import AdminDashboard from '../pages/Admin/AdminDashboard';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -15,6 +16,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order' component={OrderPage} />
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/admin' component={LoginAdmin} />
+          <Route exact path='/admindashboard' component={AdminDashboard} />
         </Switch>
       </div>
     );
