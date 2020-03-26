@@ -4,7 +4,6 @@ import {
   Fade,
   Card,
   CardContent,
-  TextField,
   Typography,
   Box,
   Select,
@@ -59,7 +58,7 @@ const SuggestionBox = (props: SuggestionProps) => {
 };
 
 const AddMenuModal = (props: ModalProps) => {
-  // const [open, setOpen] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [menuInput, setMenuInput] = React.useState('');
   const [selectOpen, setSelectOpen] = React.useState(false);
   const [menuSelect, setMenuSelect] = React.useState('all');
@@ -87,10 +86,6 @@ const AddMenuModal = (props: ModalProps) => {
       });
       setFilteredList(tempList);
     }
-  };
-
-  const handleInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    setMenuInput(ev.target.value);
   };
 
   const handleSelectChange = (ev: any) => {

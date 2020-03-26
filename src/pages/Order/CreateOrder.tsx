@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Menu } from '../../models/Menu';
-import AddMenuModal from './AddMenuModal';
+import AddMenuModal from '../../components/OrderPage/AddMenuModal';
 import firebase from 'firebase';
 import '@firebase/firestore';
 import { MenuOrder } from '../../models/MenuOrder';
