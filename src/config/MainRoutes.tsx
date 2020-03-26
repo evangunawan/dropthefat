@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from '../pages/Home';
-import OrderPage from '../pages/OrderPage';
 import { MenuPage } from '../pages/MenuPage';
 import LoginAdmin from '../pages/Admin/LoginAdmin';
+import OrderPage from '../pages/Order/OrderPage';
 
 export default class MainRoutes extends React.Component {
   render() {

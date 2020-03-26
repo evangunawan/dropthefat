@@ -1,12 +1,15 @@
 import * as React from 'react';
-import Container from '../components/Container';
+import Container from '../../components/Container';
 import { Card, CardContent, CardActions, Button, Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const OrderPage = () => {
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
   };
+
+  const history = useHistory();
 
   //TODO: Create an expression if order is empty or not.
   //We need to create an order object/class, and connect it to firebase.
@@ -27,6 +30,9 @@ const OrderPage = () => {
             size='small'
             color='primary'
             style={{ fontWeight: 'bold', marginLeft: 'auto' }}
+            onClick={() => {
+              history.push('/order/create');
+            }}
           >
             Create
           </Button>
