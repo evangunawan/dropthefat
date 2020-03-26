@@ -34,7 +34,9 @@ const LoginAdmin = () => {
           </form>
         </CardContent>
         <CardActions>
-          <Button size='small'>LOGIN</Button>
+          <Button variant='contained' color='primary' disableElevation>
+            LOGIN
+          </Button>
         </CardActions>
       </Card>
     </Container>

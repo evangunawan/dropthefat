@@ -44,11 +44,11 @@ export class MenuPage extends React.Component<{}, MenuState> {
   }
 
   renderItemType(menuType: String) {
-    if (menuType == 'main-course') {
+    if (menuType === 'main-course') {
       return 'Main Course';
-    } else if (menuType == 'drink') {
+    } else if (menuType === 'drink') {
       return 'Drink';
-    } else if (menuType == 'dessert') {
+    } else if (menuType === 'dessert') {
       return 'Dessert';
     }
   }
