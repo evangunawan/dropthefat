@@ -8,9 +8,17 @@ import { Menu } from '../../models/Menu';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import EmptyOrderCard from '../../components/OrderPage/EmptyOrderCard';
 import OrderTable from '../../components/OrderPage/OrderTable';
+import { Typography, Button } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
 
 const OrderPage = () => {
   const [order, setOrder] = React.useState<Order[]>([]);
+  const history = useHistory();
+
+  const goCreateOrder = () => {
+    history.push('/order/create');
+  };
 
   const fetchMenu = async (menuId: string) => {
     const db = firebase.firestore();
@@ -85,7 +93,27 @@ const OrderPage = () => {
   }
 
   return (
-    <Container>
+    <Container width='80%' style={{ margin: '0px auto' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
+        <div>
+          <Typography variant='h4' component='h2'>
+            Order List
+          </Typography>
+          <Typography variant='body2' component='span'>
+            Here is the list of orders in restaurant.
+          </Typography>
+        </div>
+        <Button
+          variant='contained'
+          startIcon={<Add />}
+          color='primary'
+          onClick={goCreateOrder}
+        >
+          NEW ORDER
+        </Button>
+      </div>
       <OrderTable items={order} />
     </Container>
   );

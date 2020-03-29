@@ -4,8 +4,8 @@ import { Modal, Card, Fade, CardContent, CardActions, Button, Typography,
   Table, TableCell, TableHead, TableBody, TableFooter, TablePagination, TableRow, 
   Divider, TableContainer } from '@material-ui/core';
 import { Order } from '../../models/Order';
-import dateFormat from 'dateformat';
 import { MenuOrder } from '../../models/MenuOrder';
+import { renderCurrency, renderTime } from '../../util/RenderUtil';
 
 interface ModalProps {
   open: boolean;
@@ -29,16 +29,6 @@ const OrderMenuModal = (props: ModalProps) => {
     outline: 0,
   };
 
-  const renderTime = (time: number) => {
-    if (!!time) {
-      const date = new Date(time);
-      const result = dateFormat(date, 'ddd, dd-mmm-yyyy HH:MM');
-      return result;
-    } else {
-      return 'NaN';
-    }
-  };
-
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -58,8 +48,10 @@ const OrderMenuModal = (props: ModalProps) => {
         return (
           <TableRow key={k}>
             <TableCell>{item.menu.name}</TableCell>
-            <TableCell>{item.quantity}</TableCell>
-            <TableCell>{item.quantity * item.menu.price}</TableCell>
+            <TableCell>{`${item.quantity} * ${renderCurrency(
+              item.menu.price
+            )}`}</TableCell>
+            <TableCell>{renderCurrency(item.quantity * item.menu.price)}</TableCell>
           </TableRow>
         );
       });
@@ -81,7 +73,7 @@ const OrderMenuModal = (props: ModalProps) => {
             <Typography variant='body2'>{`Time: ${renderTime(
               props.order.time
             )}`}</Typography>
-            <Divider />
+            <Divider style={{ margin: '8px 0px' }} />
             <Typography component='h2' variant='h6'>
               Order Menu
             </Typography>

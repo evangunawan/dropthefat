@@ -11,10 +11,11 @@ import {
   TableFooter,
   TablePagination,
   IconButton,
+  Tooltip,
 } from '@material-ui/core';
 import { List } from '@material-ui/icons';
-import dateFormat from 'dateformat';
 import OrderMenuModal from './OrderMenuModal';
+import { renderCurrency, renderTime } from '../../util/RenderUtil';
 
 interface TableProps {
   items: Order[];
@@ -47,11 +48,6 @@ const OrderTable = (props: TableProps) => {
     total: 0,
   };
   const [modalItem, setModalItem] = React.useState<Order>(defaultOrder);
-  const renderCurrency = (price: number) => {
-    const regex = new RegExp(/\B(?=(\d{3})+(?!\d))/g);
-    const temp = price.toString().replace(regex, ',');
-    return 'Rp' + temp;
-  };
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -64,12 +60,6 @@ const OrderTable = (props: TableProps) => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const renderTime = (time: number) => {
-    const date = new Date(time);
-    const result = dateFormat(date, 'ddd, dd-mmm-yyyy HH:MM ');
-    return result;
   };
 
   const showMenuModal = (item: Order) => {
@@ -90,15 +80,17 @@ const OrderTable = (props: TableProps) => {
           <TableCell>{item.menuOrders.length}</TableCell>
           <TableCell>{renderCurrency(item.total)}</TableCell>
           <TableCell>
-            <IconButton
-              aria-label='List'
-              style={{ width: 50 }}
-              onClick={() => {
-                showMenuModal(item);
-              }}
-            >
-              <List />
-            </IconButton>
+            <Tooltip title='View Details' arrow>
+              <IconButton
+                aria-label='List'
+                style={{ width: 50 }}
+                onClick={() => {
+                  showMenuModal(item);
+                }}
+              >
+                <List />
+              </IconButton>
+            </Tooltip>
           </TableCell>
         </TableRow>
       );
@@ -108,7 +100,7 @@ const OrderTable = (props: TableProps) => {
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} style={{ marginTop: 24 }}>
       <Table>
         <TableHeader />
         <TableBody>{renderTableBody(props.items)}</TableBody>
