@@ -1,43 +1,120 @@
 import * as React from 'react';
 import Container from '../../components/Container';
-import { Card, CardContent, CardActions, Button, Typography } from '@material-ui/core';
+import { Order } from '../../models/Order';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+import { MenuOrder } from '../../models/MenuOrder';
+import { Menu } from '../../models/Menu';
+import FullScreenSpinner from '../../components/FullScreenSpinner';
+import EmptyOrderCard from '../../components/OrderPage/EmptyOrderCard';
+import OrderTable from '../../components/OrderPage/OrderTable';
+import { Typography, Button } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 
 const OrderPage = () => {
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-  };
-
+  const [order, setOrder] = React.useState<Order[]>([]);
   const history = useHistory();
 
-  //TODO: Create an expression if order is empty or not.
-  //We need to create an order object/class, and connect it to firebase.
+  const goCreateOrder = () => {
+    history.push('/order/create');
+  };
+
+  const fetchMenu = async (menuId: string) => {
+    const db = firebase.firestore();
+    let result: Menu = {} as Menu;
+    await db
+      .collection('menu')
+      .doc(menuId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          result = {
+            id: doc.id,
+            name: data?.name || 'null',
+            price: data?.price || 'null',
+            type: data?.type || 'null',
+          };
+        }
+      });
+    return result;
+  };
+
+  const fetchOrder = async () => {
+    const db = firebase.firestore();
+    const result: Order[] = [] as Order[];
+    await db
+      .collection('order')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const orderMenus: MenuOrder[] = [];
+
+          //Get menuOrders array
+          data.menuOrders.forEach((item: any) => {
+            fetchMenu(item.menu).then((val: Menu) => {
+              orderMenus.push({
+                menu: val,
+                quantity: item.quantity,
+              });
+            });
+          });
+
+          const newOrder: Order = {
+            id: doc.id,
+            menuOrders: orderMenus,
+            pic: data.pic,
+            time: data.time,
+            total: data.total,
+          };
+
+          result.push(newOrder);
+        });
+      });
+
+    setOrder(result);
+    console.log(result);
+  };
+
+  React.useEffect(() => {
+    fetchOrder();
+    // eslint-disable-next-line
+  }, []);
+
+  if (order.length < 1) {
+    return (
+      <div>
+        <FullScreenSpinner open={order.length < 1} />
+        <EmptyOrderCard />
+      </div>
+    );
+  }
+
   return (
-    <Container style={containerStyle}>
-      <Card style={{ maxWidth: 300 }}>
-        <CardContent>
-          <Typography gutterBottom variant='h5' component='h2'>
-            Restaurant Orders
+    <Container width='80%' style={{ margin: '0px auto' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
+        <div>
+          <Typography variant='h4' component='h2'>
+            Order List
           </Typography>
-          <Typography variant='body2' color='textSecondary' component='p'>
-            Food and menu order from customers. Currently empty, no available orders. You
-            can add an order item using the button below.
+          <Typography variant='body2' component='span'>
+            Here is the list of orders in restaurant.
           </Typography>
-        </CardContent>
-        <CardActions>
-          <Button
-            size='small'
-            color='primary'
-            style={{ fontWeight: 'bold', marginLeft: 'auto' }}
-            onClick={() => {
-              history.push('/order/create');
-            }}
-          >
-            Create
-          </Button>
-        </CardActions>
-      </Card>
+        </div>
+        <Button
+          variant='contained'
+          startIcon={<Add />}
+          color='primary'
+          onClick={goCreateOrder}
+        >
+          NEW ORDER
+        </Button>
+      </div>
+      <OrderTable items={order} />
     </Container>
   );
 };

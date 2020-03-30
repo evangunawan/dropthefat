@@ -1,5 +1,5 @@
 import * as React from 'react';
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import firebaseConfig from './config/firebase';
 import { ThemeProvider, Box } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
