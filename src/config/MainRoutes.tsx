@@ -5,6 +5,7 @@ import Home from '../pages/Home';
 import { MenuPage } from '../pages/MenuPage';
 import OrderPage from '../pages/Order/OrderPage';
 import CreateOrder from '../pages/Order/CreateOrder';
+import ManageExpenditure from '../pages/Expenditure/ManageExpenditure';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -15,6 +16,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order' component={OrderPage} />
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/order/create' component={CreateOrder} />
+          <Route exact path='/expenditure' component={ManageExpenditure} />
         </Switch>
       </div>
     );
