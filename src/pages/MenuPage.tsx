@@ -12,19 +12,27 @@ import {
   TableFooter,
   TablePagination,
   Typography,
+  withStyles,
+  TextField,
 } from '@material-ui/core';
 import Container from '../components/Container';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-// type MenuState = { listMenu: any[]; ready: boolean };
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: 'gray',
+    color: 'white',
+    fontSize: 20,
+  },
+}))(TableCell);
 
 const TableHeader = () => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>Food Name</TableCell>
-        <TableCell>Food Type</TableCell>
-        <TableCell>Price</TableCell>
+        <StyledTableCell>Food Name</StyledTableCell>
+        <StyledTableCell>Food Type</StyledTableCell>
+        <StyledTableCell>Price</StyledTableCell>
       </TableRow>
     </TableHead>
   );
@@ -34,6 +42,23 @@ const MenuPage = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [menu, setMenu] = React.useState([] as any[]);
+  const [txtSearch, setTxtSearch] = React.useState('');
+  const [filterMenu, setFilterMenu] = React.useState([] as any[]);
+
+  const searchBarStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: '20px 0px',
+  };
+
+  const handleSearchMenu = (ev: any) => {
+    setTxtSearch(ev.target.value);
+    const temp = menu.filter((item: any) =>
+      item.name.toLowerCase().includes(ev.target.value.toLowerCase())
+    );
+    setFilterMenu(temp);
+  };
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -61,6 +86,7 @@ const MenuPage = () => {
         });
       });
     setMenu(result);
+    setFilterMenu(result);
   };
 
   const renderMenuType = (val: string) => {
@@ -89,19 +115,29 @@ const MenuPage = () => {
 
   return (
     <Container width='1000px'>
-      <Typography variant='h4' component='h4' align='center' style={{ marginBottom: 12 }}>
-        Food Menu
-      </Typography>
+      <div style={searchBarStyle}>
+        <Typography variant='h4' component='h4'>
+          Food Menu
+        </Typography>
+        <form>
+          <TextField
+            label='Search Menu'
+            variant='outlined'
+            value={txtSearch}
+            onChange={(ev) => handleSearchMenu(ev)}
+          ></TextField>
+        </form>
+      </div>
       <TableContainer component={Paper}>
         <Table>
           <TableHeader />
-          <TableBody>{renderTableBody(menu)}</TableBody>
+          <TableBody>{renderTableBody(filterMenu)}</TableBody>
           <TableFooter>
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
                 colSpan={3}
-                count={menu.length}
+                count={filterMenu.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{
