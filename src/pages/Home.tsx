@@ -4,7 +4,7 @@ import Container from '../components/Container';
 const Home = () => {
   return (
     <div>
-      <Container>Home Page</Container>
+      <Container width='100%'>Home Page</Container>
     </div>
   );
 };

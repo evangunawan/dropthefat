@@ -29,7 +29,6 @@ export class MenuPage extends React.Component<{}, MenuState> {
 
   async getMenuList() {
     const db = firebase.firestore();
-    let result = null;
     await db
       .collection('menu')
       .get()
@@ -43,12 +42,12 @@ export class MenuPage extends React.Component<{}, MenuState> {
     this.setState({ ready: true });
   }
 
-  renderItemType(menuType: String) {
-    if (menuType == 'main-course') {
+  renderItemType(menuType: string) {
+    if (menuType === 'main-course') {
       return 'Main Course';
-    } else if (menuType == 'drink') {
+    } else if (menuType === 'drink') {
       return 'Drink';
-    } else if (menuType == 'dessert') {
+    } else if (menuType === 'dessert') {
       return 'Dessert';
     }
   }
@@ -69,7 +68,7 @@ export class MenuPage extends React.Component<{}, MenuState> {
     });
 
     return (
-      <Container>
+      <Container width='80%'>
         <h1>Food Menus</h1>
         <TableContainer>
           <Table>

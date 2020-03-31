@@ -9,7 +9,7 @@ const EmptyOrderCard = () => {
   };
   const history = useHistory();
   return (
-    <Container style={containerStyle}>
+    <Container width='100%' style={containerStyle}>
       <Card style={{ maxWidth: 300 }}>
         <CardContent>
           <Typography gutterBottom variant='h5' component='h2'>
