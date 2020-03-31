@@ -1,7 +1,6 @@
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
-
 import {
   TableContainer,
   Table,
@@ -9,80 +8,152 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  Paper,
+  TableFooter,
+  TablePagination,
+  Typography,
+  withStyles,
+  TextField,
 } from '@material-ui/core';
 import Container from '../components/Container';
+import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-type MenuState = { listMenu: any[]; ready: boolean };
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    backgroundColor: 'gray',
+    color: 'white',
+    fontSize: 20,
+  },
+}))(TableCell);
 
-export class MenuPage extends React.Component<{}, MenuState> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      ready: false,
-      listMenu: [],
-    };
-  }
+const TableHeader = () => {
+  return (
+    <TableHead>
+      <TableRow>
+        <StyledTableCell>Food Name</StyledTableCell>
+        <StyledTableCell>Food Type</StyledTableCell>
+        <StyledTableCell>Price</StyledTableCell>
+      </TableRow>
+    </TableHead>
+  );
+};
 
-  componentDidMount() {
-    this.getMenuList();
-  }
+const MenuPage = () => {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [menu, setMenu] = React.useState([] as any[]);
+  const [txtSearch, setTxtSearch] = React.useState('');
+  const [filterMenu, setFilterMenu] = React.useState([] as any[]);
 
-  async getMenuList() {
+  const searchBarStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: '20px 0px',
+  };
+
+  const handleSearchMenu = (ev: any) => {
+    setTxtSearch(ev.target.value);
+    const temp = menu.filter((item: any) =>
+      item.name.toLowerCase().includes(ev.target.value.toLowerCase())
+    );
+    setFilterMenu(temp);
+  };
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const getMenuList = async () => {
     const db = firebase.firestore();
+    const result: any[] = [] as any[];
     await db
       .collection('menu')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          const temp = [...this.state.listMenu, doc.data()];
-          this.setState({ listMenu: temp });
+          result.push(doc.data());
+          // console.log(doc.data());
         });
       });
+    setMenu(result);
+    setFilterMenu(result);
+  };
 
-    this.setState({ ready: true });
-  }
+  const renderMenuType = (val: string) => {
+    if (val === 'drink') return 'Drink';
+    else if (val === 'main-course') return 'Main Course';
+    else if (val === 'dessert') return 'Dessert';
+  };
 
-  renderItemType(menuType: string) {
-    if (menuType === 'main-course') {
-      return 'Main Course';
-    } else if (menuType === 'drink') {
-      return 'Drink';
-    } else if (menuType === 'dessert') {
-      return 'Dessert';
-    }
-  }
-
-  render() {
-    if (!this.state.ready) {
-      return <p>Loading</p>;
-    }
-
-    const items = this.state.listMenu.map((item, key) => {
+  const renderTableBody = (items: any[]) => {
+    const result = items.map((item: any, k) => {
       return (
-        <TableRow key={key}>
-          <TableCell align='left'>{item.name}</TableCell>
-          <TableCell align='left'>{this.renderItemType(item.type)}</TableCell>
-          <TableCell align='left'>{item.price}</TableCell>
+        <TableRow key={k}>
+          <TableCell>{item.name}</TableCell>
+          <TableCell>{renderMenuType(item.type)}</TableCell>
+          <TableCell>{item.price}</TableCell>
         </TableRow>
       );
     });
 
-    return (
-      <Container width='80%'>
-        <h1>Food Menus</h1>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Food Name</TableCell>
-                <TableCell>Food Type</TableCell>
-                <TableCell>Price</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{items}</TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
-    );
-  }
-}
+    return result;
+  };
+
+  React.useEffect(() => {
+    getMenuList();
+  }, []);
+
+  return (
+    <Container width='1000px'>
+      <div style={searchBarStyle}>
+        <Typography variant='h4' component='h4'>
+          Food Menu
+        </Typography>
+        <form>
+          <TextField
+            label='Search Menu'
+            variant='outlined'
+            value={txtSearch}
+            onChange={(ev) => handleSearchMenu(ev)}
+          ></TextField>
+        </form>
+      </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHeader />
+          <TableBody>{renderTableBody(filterMenu)}</TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
+                colSpan={3}
+                count={filterMenu.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                SelectProps={{
+                  inputProps: { 'aria-label': 'rows per page' },
+                  native: true,
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationActions}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
+};
+
+export default MenuPage;
