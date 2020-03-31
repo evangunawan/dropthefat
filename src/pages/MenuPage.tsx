@@ -68,7 +68,7 @@ export class MenuPage extends React.Component<{}, MenuState> {
     });
 
     return (
-      <Container>
+      <Container width='80%'>
         <h1>Food Menus</h1>
         <TableContainer>
           <Table>
