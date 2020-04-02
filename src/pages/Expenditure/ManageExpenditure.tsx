@@ -31,7 +31,7 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
     const db = firebase.firestore();
     let result = null;
     await db
-      .collection('menu')
+      .collection('ingredient')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -43,16 +43,6 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
     this.setState({ ready: true });
   }
 
-  renderItemType(menuType: String) {
-    if (menuType == 'main-course') {
-      return 'Main Course';
-    } else if (menuType == 'drink') {
-      return 'Drink';
-    } else if (menuType == 'dessert') {
-      return 'Dessert';
-    }
-  }
-
   render() {
     if (!this.state.ready) {
       return <p>Loading</p>;
@@ -61,8 +51,8 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
     const items = this.state.listVendor.map((item, key) => {
       return (
         <TableRow key={key}>
+          <TableCell align='left'>{item.id}</TableCell>
           <TableCell align='left'>{item.name}</TableCell>
-          <TableCell align='left'>{this.renderItemType(item.type)}</TableCell>
           <TableCell align='left'>{item.price}</TableCell>
         </TableRow>
       );
@@ -70,13 +60,13 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
 
     return (
       <Container>
-        <h1>Food Menus</h1>
+        <h1>Ingredients</h1>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Food Name</TableCell>
-                <TableCell>Food Type</TableCell>
+                <TableCell>Id</TableCell>
+                <TableCell>Name</TableCell>
                 <TableCell>Price</TableCell>
               </TableRow>
             </TableHead>

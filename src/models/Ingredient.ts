@@ -1,4 +1,4 @@
-export interface RawMeterial {
+export interface Ingredient {
   id?: string;
   name: string;
   price: number;
