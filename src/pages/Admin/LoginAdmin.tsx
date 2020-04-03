@@ -18,6 +18,11 @@ import Cookies from 'universal-cookie';
 const cookie = new Cookies();
 
 const LoginAdmin = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [adminToken, setAdminToken] = React.useState('');
+  const [txtPassword, setTxtPassword] = React.useState('');
+  const history = useHistory();
+
   const containerStyle: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
@@ -30,10 +35,6 @@ const LoginAdmin = () => {
     padding: 16,
   };
 
-  // create state react.hook
-  const [txtPassword, setTxtPassword] = React.useState('');
-  const history = useHistory();
-
   const generateToken = (len: number) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -42,6 +43,26 @@ const LoginAdmin = () => {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  };
+
+  const checkToken = async () => {
+    const db = firebase.firestore();
+    let result = '';
+    await db
+      .collection('admin')
+      .doc('account')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          result = doc.data()?.token;
+        }
+      });
+    setAdminToken(result);
+    if (cookie.get('admin_token') !== '') {
+      if (result === cookie.get('admin_token')) {
+        history.push('/admin/dashboard');
+      }
+    }
   };
 
   const setToken = async (token: string) => {
@@ -68,12 +89,19 @@ const LoginAdmin = () => {
     //Login successfull
     if (md5(txtPassword) === adminPass) {
       const token = generateToken(8);
-      cookie.set('admin_token', token);
-      setToken(token);
-      console.log('set cookie: ' + token);
+      cookie.set('admin_token', token, { path: '/' });
+      await setToken(token);
+      console.log('set token to cookie: ' + token);
       history.push('/admin/dashboard');
+    } else {
+      alert('Wrong password!');
+      setTxtPassword('');
     }
   };
+
+  React.useEffect(() => {
+    checkToken();
+  });
 
   return (
     <Container width='500px' style={containerStyle}>

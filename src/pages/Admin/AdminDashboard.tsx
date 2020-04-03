@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { Button } from '@material-ui/core';
 import Container from '../../components/Container';
@@ -9,9 +11,26 @@ const cookie = new Cookies();
 
 const AdminDashboard = () => {
   const history = useHistory();
-  if (!cookie.get('admin_token')) {
-    history.push('/admin');
-  }
+  const [adminToken, setAdminToken] = React.useState('');
+
+  const fetchToken = async () => {
+    const db = firebase.firestore();
+    let result = '';
+    await db
+      .collection('admin')
+      .doc('account')
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          result = doc.data()?.token;
+        }
+      });
+    setAdminToken(result);
+
+    if (cookie.get('admin_token') === '' || result !== cookie.get('admin_token')) {
+      history.push('/admin');
+    }
+  };
   // const [adminToken, setAdminToken] = React.useState();1
   const containerStyle: CSSProperties = {
     display: 'flex',
@@ -32,6 +51,14 @@ const AdminDashboard = () => {
     backgroundColor: 'gray',
     color: 'white',
   };
+
+  React.useState(() => {
+    fetchToken();
+  });
+
+  if (adminToken === '') {
+    return null;
+  }
 
   return (
     <Container width='80%' style={containerStyle}>

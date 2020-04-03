@@ -5,12 +5,13 @@ import { AppBar, Toolbar, IconButton, Typography, Button } from '@material-ui/co
 import { Menu } from '@material-ui/icons';
 import MainDrawer from './MainDrawer';
 import Cookies from 'universal-cookie';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 const cookie = new Cookies();
 
 const MainAppBar = () => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const history = useHistory();
+  const location = useLocation();
 
   const logout = async () => {
     const db = firebase.firestore();
@@ -18,7 +19,7 @@ const MainAppBar = () => {
     await adminRef.update({
       token: '',
     });
-    cookie.remove('admin_token');
+    cookie.set('admin_token', '');
     history.push('/admin');
   };
 
@@ -31,12 +32,18 @@ const MainAppBar = () => {
             style={{ marginRight: '12px' }}
             aria-label='menu'
             onClick={() => setDrawerOpen(true)}
+            disabled={location.pathname === '/admin'}
           >
             <Menu />
           </IconButton>
           <Typography variant='h6'>Drop The Fat</Typography>
-          {cookie.get('admin_token') ? (
-            <Button variant='contained' color='secondary' onClick={logout}>
+          {cookie.get('admin_token') && location.pathname.includes('/admin') ? (
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={logout}
+              style={{ marginLeft: 'auto' }}
+            >
               Log Out
             </Button>
           ) : null}

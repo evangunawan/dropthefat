@@ -7,13 +7,23 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  ListSubheader,
 } from '@material-ui/core';
-import { Description, RestaurantMenu, Home } from '@material-ui/icons';
-import { useHistory } from 'react-router-dom';
+import {
+  Description,
+  RestaurantMenu,
+  Home,
+  People,
+  Deck,
+  Business,
+  ShoppingCart,
+  Receipt,
+} from '@material-ui/icons';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface DrawerProps {
   open: boolean;
-  onClose: any;
+  onClose(): any;
 }
 
 interface ItemProps {
@@ -40,30 +50,83 @@ const DrawerItem = (props: ItemProps) => {
 };
 
 const MainDrawer = (props: DrawerProps) => {
-  //FIXME: Fix the onLink callback, don't need to reuse the code in every component.
+  const location = useLocation();
+  const [isAdmin] = React.useState(location.pathname.includes('/admin'));
+
+  const renderAdminDrawer = () => {
+    return (
+      <div>
+        <List subheader={<ListSubheader>Manage</ListSubheader>}>
+          <DrawerItem
+            text='Menu'
+            link='/admin/menu'
+            icon={<RestaurantMenu />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Employees'
+            link='/admin/employees'
+            icon={<People />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Tables'
+            link='/admin/tables'
+            icon={<Deck />}
+            onLink={props.onClose}
+          />
+        </List>
+        <List subheader={<ListSubheader>Purchasing</ListSubheader>}>
+          <DrawerItem
+            text='Vendors'
+            link='/admin/vendors'
+            icon={<Business />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Ingredients'
+            link='/admin/ingredients'
+            icon={<ShoppingCart />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Expenditure'
+            link='/admin/expenditure'
+            icon={<Receipt />}
+            onLink={props.onClose}
+          />
+        </List>
+      </div>
+    );
+  };
+
+  const renderDrawer = () => {
+    return (
+      <List>
+        <DrawerItem text='Home' link='/' icon={<Home />} onLink={props.onClose} />
+        <DrawerItem
+          text='Order'
+          link='/order'
+          icon={<Description />}
+          onLink={props.onClose}
+        />
+        <DrawerItem
+          text='Food Menu'
+          link='/menu'
+          icon={<RestaurantMenu />}
+          onLink={props.onClose}
+        />
+      </List>
+    );
+  };
+
   return (
     <Drawer anchor='left' open={props.open} onClose={props.onClose}>
       <Box style={{ height: 64, display: 'flex', alignItems: 'center' }}>
         <h3 style={{ marginLeft: 16 }}>Drop the Fat</h3>
       </Box>
       <Divider />
-      <div style={{ width: 300 }}>
-        <List>
-          <DrawerItem text='Home' link='/' icon={<Home />} onLink={props.onClose} />
-          <DrawerItem
-            text='Order'
-            link='/order'
-            icon={<Description />}
-            onLink={props.onClose}
-          />
-          <DrawerItem
-            text='Food Menu'
-            link='/menu'
-            icon={<RestaurantMenu />}
-            onLink={props.onClose}
-          />
-        </List>
-      </div>
+      <div style={{ width: 300 }}>{isAdmin ? renderAdminDrawer() : renderDrawer()}</div>
     </Drawer>
   );
 };
