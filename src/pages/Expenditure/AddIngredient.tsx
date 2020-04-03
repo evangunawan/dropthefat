@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 type MenuState = { listVendor: any[]; ready: boolean };
 
-export class ManageExpenditure extends React.Component<{}, MenuState> {
+export class AddIngredient extends React.Component<{}, MenuState> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -98,4 +98,4 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
   }
 }
 
-export default ManageExpenditure;
+export default AddIngredient;
