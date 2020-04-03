@@ -1,9 +1,18 @@
 import * as React from 'react';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
-import { Box, Paper, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import Container from '../../components/Container';
+import Cookies from 'universal-cookie';
+import { useHistory } from 'react-router-dom';
+
+const cookie = new Cookies();
 
 const AdminDashboard = () => {
+  const history = useHistory();
+  if (!cookie.get('admin_token')) {
+    history.push('/admin');
+  }
+  // const [adminToken, setAdminToken] = React.useState();1
   const containerStyle: CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap',
