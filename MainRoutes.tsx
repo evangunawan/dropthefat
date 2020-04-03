@@ -7,7 +7,7 @@ import CreateOrder from '../pages/Order/CreateOrder';
 import MenuPage from '../pages/MenuPage';
 import Employee from '../pages/Employee';
 import Payment from '../pages/Payment';
-
+import PaymentCheckout from '../pages/PaymentCheckout';
 export default class MainRoutes extends React.Component {
   render() {
     return (
@@ -19,6 +19,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/employee' component={Employee}/>
           <Route exact path='/payment' component={Payment}/>
+          <Route exact path='/payment/check' component={PaymentCheckout}/>
         </Switch>
       </div>
     );
