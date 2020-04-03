@@ -25,7 +25,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Container style={containerStyle}>
+    <Container width='80%' style={containerStyle}>
       <Button variant='contained' style={menuBox}>
         <span style={{ textAlign: 'center' }}>Menu Management</span>
       </Button>

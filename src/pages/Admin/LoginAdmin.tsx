@@ -21,6 +21,7 @@ const LoginAdmin = () => {
   const cardStyle: CSSProperties = {
     width: '500px',
     height: 'auto',
+    padding: 16,
   };
 
   // create state react.hook
@@ -36,13 +37,13 @@ const LoginAdmin = () => {
   };
 
   return (
-    <Container style={containerStyle}>
+    <Container width='500px' style={containerStyle}>
       <Card style={cardStyle}>
         <CardContent>
           <Typography variant='h5' component='h2' align='center'>
             Login Admin
           </Typography>
-          <form style={{ padding: 10 }}>
+          <form>
             <TextField
               type='password'
               label='Password'
@@ -51,6 +52,8 @@ const LoginAdmin = () => {
               onChange={(event: any) => {
                 setTxtPassword(event.target.value);
               }}
+              style={{ margin: '16px 0px' }}
+              fullWidth
             />
           </form>
         </CardContent>
@@ -60,6 +63,7 @@ const LoginAdmin = () => {
             color='primary'
             onClick={verifyLogin}
             disableElevation
+            fullWidth
           >
             LOGIN
           </Button>

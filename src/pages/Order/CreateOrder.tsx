@@ -15,12 +15,14 @@ import {
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Menu } from '../../models/Menu';
-import AddMenuModal from './AddMenuModal';
-import firebase from 'firebase';
-import '@firebase/firestore';
+import AddMenuModal from '../../components/OrderPage/AddMenuModal';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import { MenuOrder } from '../../models/MenuOrder';
 import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
+import { useHistory } from 'react-router-dom';
+import { renderCurrency } from '../../util/RenderUtil';
 
 interface TableProps {
   orders: MenuOrder[];
@@ -32,12 +34,6 @@ const MenuTable = (props: TableProps) => {
   const placeholderStyle = {
     margin: '0 auto',
     padding: '16px',
-  };
-
-  const renderCurrency = (price: number) => {
-    const regex = new RegExp(/\B(?=(\d{3})+(?!\d))/g);
-    const temp = price.toString().replace(regex, ',');
-    return 'Rp' + temp;
   };
 
   const deleteItem = (item: MenuOrder) => {
@@ -156,6 +152,7 @@ const CreateOrder = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
+  const history = useHistory();
 
   async function fetchMenu() {
     const result: Menu[] = [];
@@ -314,7 +311,14 @@ const CreateOrder = () => {
         </form>
       </div>
       <div style={btnGroupStyle}>
-        <Button variant='text' color='default' style={{ marginRight: 8 }}>
+        <Button
+          variant='text'
+          color='default'
+          style={{ marginRight: 8 }}
+          onClick={() => {
+            history.push('/order');
+          }}
+        >
           <b>Cancel</b>
         </Button>
         <Button

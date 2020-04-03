@@ -2,10 +2,11 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from '../pages/Home';
-import { MenuPage } from '../pages/MenuPage';
 import LoginAdmin from '../pages/Admin/LoginAdmin';
-import OrderPage from '../pages/Order/OrderPage';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
+import OrderPage from '../pages/Order/OrderPage';
+import CreateOrder from '../pages/Order/CreateOrder';
+import MenuPage from '../pages/MenuPage';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -16,7 +17,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order' component={OrderPage} />
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/admin' component={LoginAdmin} />
-          <Route exact path='/admindashboard' component={AdminDashboard} />
+          <Route exact path='/admin/dashboard' component={AdminDashboard} />
         </Switch>
       </div>
     );
