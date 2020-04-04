@@ -6,6 +6,7 @@ import OrderPage from '../pages/Order/OrderPage';
 import CreateOrder from '../pages/Order/CreateOrder';
 import MenuPage from '../pages/MenuPage';
 import Payment from '../pages/Payment';
+import PaymentCheckout from '../pages/PaymentCheckout';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -17,6 +18,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/payment' component={Payment}/>
+          <Route exact path='/payment/check' component={PaymentCheckout}/>
         </Switch>
       </div>
     );
