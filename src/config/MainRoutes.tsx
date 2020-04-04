@@ -7,6 +7,7 @@ import AdminDashboard from '../pages/Admin/AdminDashboard';
 import OrderPage from '../pages/Order/OrderPage';
 import CreateOrder from '../pages/Order/CreateOrder';
 import MenuPage from '../pages/MenuPage';
+import TableManagement from '../pages/Admin/Tables/TableManagement';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -17,9 +18,21 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order' component={OrderPage} />
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/menu' component={MenuPage} />
-          <Route exact path='/admin' render={() => <Redirect to='/admin/login' />} />
-          <Route exact path='/admin/login' component={LoginAdmin} />
-          <Route exact path='/admin/dashboard' component={AdminDashboard} />
+          <Route
+            path='/admin'
+            render={({ match }) => (
+              <div>
+                <Route
+                  exact
+                  path={`${match.url}/`}
+                  render={() => <Redirect to='/admin/login' />}
+                />
+                <Route path={`${match.url}/login`} component={LoginAdmin} />
+                <Route path={`${match.url}/dashboard`} component={AdminDashboard} />
+                <Route path={`${match.url}/tables`} component={TableManagement} />
+              </div>
+            )}
+          />
         </Switch>
       </div>
     );
