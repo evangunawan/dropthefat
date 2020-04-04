@@ -8,7 +8,7 @@ import {
   ListItemText,
   Divider,
 } from '@material-ui/core';
-import { Description, RestaurantMenu, Home } from '@material-ui/icons';
+import { Description, RestaurantMenu, Home, MoneyOutlined } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 
 interface DrawerProps {
@@ -62,6 +62,12 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<RestaurantMenu />}
             onLink={props.onClose}
           />
+          <DrawerItem
+            text='Payment'
+            link='/payment'
+            icon={<MoneyOutlined/>}
+            onLink={props.onClose}
+            />
         </List>
       </div>
     </Drawer>
