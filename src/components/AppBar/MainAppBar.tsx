@@ -20,7 +20,7 @@ const MainAppBar = () => {
       token: '',
     });
     cookie.set('admin_token', '');
-    history.push('/admin');
+    history.push('/admin/login');
   };
 
   return (
@@ -32,7 +32,7 @@ const MainAppBar = () => {
             style={{ marginRight: '12px' }}
             aria-label='menu'
             onClick={() => setDrawerOpen(true)}
-            disabled={location.pathname === '/admin'}
+            disabled={location.pathname === '/admin/login'}
           >
             <Menu />
           </IconButton>

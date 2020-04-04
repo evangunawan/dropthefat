@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     setAdminToken(result);
 
     if (cookie.get('admin_token') === '' || result !== cookie.get('admin_token')) {
-      history.push('/admin');
+      history.push('/admin/login');
     }
   };
   // const [adminToken, setAdminToken] = React.useState();1
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
     color: 'white',
   };
 
-  React.useState(() => {
+  React.useEffect(() => {
     fetchToken();
   });
 
