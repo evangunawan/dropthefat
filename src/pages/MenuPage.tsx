@@ -18,7 +18,7 @@ import {
 import Container from '../components/Container';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-const StyledTableCell = withStyles((theme) => ({
+const StyledTableCell = withStyles(() => ({
   head: {
     backgroundColor: 'gray',
     color: 'white',

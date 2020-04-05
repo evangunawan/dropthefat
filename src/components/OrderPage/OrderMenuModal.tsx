@@ -10,7 +10,7 @@ import { renderCurrency, renderTime } from '../../util/RenderUtil';
 interface ModalProps {
   open: boolean;
   order: Order;
-  onClose: any;
+  onClose(): void;
 }
 
 const OrderMenuModal = (props: ModalProps) => {

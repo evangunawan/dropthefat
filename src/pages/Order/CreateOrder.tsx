@@ -26,8 +26,8 @@ import { renderCurrency } from '../../util/RenderUtil';
 
 interface TableProps {
   orders: MenuOrder[];
-  onDelete(item: MenuOrder): any;
-  onQtyChange(ev: any, item: MenuOrder): any;
+  onDelete(item: MenuOrder): void;
+  onQtyChange(ev: any, item: MenuOrder): void;
 }
 
 const MenuTable = (props: TableProps) => {

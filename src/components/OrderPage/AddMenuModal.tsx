@@ -17,14 +17,14 @@ import { Menu } from '../../models/Menu';
 
 interface ModalProps {
   open: boolean;
-  onClose: any;
+  onClose(): void;
   menuList: Menu[];
-  onMenuAdd(item: Menu): any;
+  onMenuAdd(item: Menu): void;
 }
 
 interface SuggestionProps {
   menuList: Menu[];
-  onMenuAdd(item: Menu): any;
+  onMenuAdd(item: Menu): void;
 }
 
 const SuggestionBox = (props: SuggestionProps) => {
@@ -119,16 +119,6 @@ const AddMenuModal = (props: ModalProps) => {
                 <MenuItem value='main-course'>Main Course</MenuItem>
                 <MenuItem value='dessert'>Dessert</MenuItem>
               </Select>
-              {/* //TODO: Add TextField filtering */}
-              {/* <TextField 
-                variant='outlined'
-                label='Search Menu' 
-                placeholder='Type a menu name' 
-                fullWidth 
-                value={menuInput}
-                onChange={handleInput}
-                style={{margin: '8px 0px'}}
-              /> */}
 
               <Typography variant='body2' color='textSecondary'>
                 Please select an item:
