@@ -30,7 +30,7 @@ export default class App extends React.Component {
         <Box
           bgcolor='background.default'
           color='text.primary'
-          style={{ width: '100%', height: '100vh' }}
+          style={{ width: '100%', minHeight: '100vh' }}
           id='root-box'
         >
           <Router>
