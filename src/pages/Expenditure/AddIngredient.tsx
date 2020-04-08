@@ -1,6 +1,7 @@
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
+import { Ingredient } from '../../models/Ingredient';
 
 import {
   TableContainer,
@@ -14,40 +15,64 @@ import {
 import Container from '../../components/Container';
 import { Link } from "react-router-dom";
 
-type MenuState = { listVendor: any[]; ready: boolean };
-
-export class AddIngredient extends React.Component<{}, MenuState> {
+export class AddIngredient extends React.Component<{}, { ready: boolean, id: string, name: string, price: number }> {
   constructor(props: any) {
     super(props);
     this.state = {
       ready: false,
-      listVendor: [],
+      id: ' ',
+      name: ' ',
+      price: 0
     };
+
+    this.handleChangeId = this.handleChangeId.bind(this)
+    this.handleChangeName = this.handleChangeName.bind(this)
+    this.handleChangePrice = this.handleChangePrice.bind(this)
+
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
-    this.getVendorList();
+  handleSubmit(event: any){
+    this.addIngredientToDB()
+    event.preventDefault();
   }
 
-  async getVendorList() {
+  handleChangeId(event: any){
+    this.setState({id: event.target.value});
+  }
+
+  handleChangeName(event: any){
+    this.setState({name: event.target.value});
+  }
+
+  handleChangePrice(event: any){
+    this.setState({price: event.target.value});
+  }
+
+  async addIngredientToDB() {
     const db = firebase.firestore();
-    let result = null;
-    await db
-      .collection('ingredient')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const temp = [...this.state.listVendor, doc.data()];
-          this.setState({ listVendor: temp });
-        });
-      });
+    db.collection('ingredient').doc().set({
+        id: this.state.id,
+        name: this.state.name,
+        price: this.state.price
+    })
 
     this.setState({ ready: true });
   }
 
   render() {
-    if (!this.state.ready) {
-      return <p>Loading</p>;
+    if(this.state.ready){
+      return(
+        <Container>
+          <h1>Success</h1>
+          <Link to="/expenditure">
+            <Button
+              color='primary'
+              style={{ fontWeight: 'bold', marginLeft: 'auto' }}
+            >Back</Button>
+          </Link>
+        </Container>
+      );
     }
 
     const btnGroupStyle: React.CSSProperties = {
@@ -56,45 +81,37 @@ export class AddIngredient extends React.Component<{}, MenuState> {
        justifyContent: 'flex-end',
      };
 
-    const items = this.state.listVendor.map((item, key) => {
-      return (
-        <TableRow key={key}>
-          <TableCell align='left'>{item.id}</TableCell>
-          <TableCell align='left'>{item.name}</TableCell>
-          <TableCell align='left'>{item.price}</TableCell>
-        </TableRow>
-      );
-    });
+    const formStyle: React.CSSProperties = {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      // flexWrap: 'wrap',
+      padding: '16px 0',
+    };
 
     return (
       <Container>
         <h1>Ingredients</h1>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Price</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{items}</TableBody>
-          </Table>
-        </TableContainer>
-        &nbsp;
-         <Link to="/expenditure/add">
-            <div style={btnGroupStyle}>
-               <Button
-                  variant='contained'
-                  color='primary'
-                  style={{ fontWeight: 'bold', marginLeft: 'auto' }}
-               >
-               Create
-               </Button>
-            </div>
-         </Link>
+        <form onSubmit={this.handleSubmit} style={formStyle}>
+          <label>
+            Id :
+            <input type="text" value={this.state.id} onChange={this.handleChangeId}/>
+          </label>
+          <label>
+            Name :
+            <input type="text" value={this.state.name} onChange={this.handleChangeName}/>
+          </label>
+          <label>
+            Price :
+            <input type="text" value={this.state.price}  onChange={this.handleChangePrice}/>
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
       </Container>
     );
+
+
   }
 }
 

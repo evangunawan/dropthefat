@@ -89,7 +89,7 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
                   color='primary'
                   style={{ fontWeight: 'bold', marginLeft: 'auto' }}
                >
-               Create
+               Add Ingredient
                </Button>
             </div>
          </Link>
