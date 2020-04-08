@@ -8,7 +8,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  TableFooter,
   TablePagination,
   IconButton,
   Tooltip,

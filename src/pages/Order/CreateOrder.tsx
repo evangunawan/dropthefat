@@ -23,6 +23,7 @@ import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
+import { DiningTable } from '../../models/DiningTable';
 
 interface TableProps {
   orders: MenuOrder[];
@@ -149,6 +150,8 @@ const CreateOrder = () => {
   const [pic, setPic] = React.useState('');
   const [menuList, setMenuList] = React.useState<Menu[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
   const [orders, setOrders] = React.useState<MenuOrder[]>([]); //Orders that added in the table.
+  const [guests, setGuests] = React.useState(0); // Guest count
+  const [tableList, setTableList] = React.useState<DiningTable[]>([]);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
@@ -269,6 +272,12 @@ const CreateOrder = () => {
     setOrders(temp);
   };
 
+  const renderTableType = () => {
+    if (guests < 5) return 'small';
+    else if (guests < 7) return 'medium';
+    else return 'large';
+  };
+
   if (menuList.length < 1) {
     return <p>Loading Menu...</p>;
   }
@@ -284,12 +293,51 @@ const CreateOrder = () => {
       <div>
         <form style={formStyle}>
           <TextField
+            required
             fullWidth
             label='Person in charge'
             variant='outlined'
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'start',
+              alignItems: 'center',
+              padding: '16px 0px',
+            }}
+          >
+            <div>
+              <TextField
+                required
+                fullWidth
+                label='Guest count'
+                type='number'
+                variant='outlined'
+                style={{ width: 300 }}
+                value={guests}
+                onChange={(ev) => setGuests(parseInt(ev.target.value))}
+              />
+            </div>
+            {/* This is a spacer */}
+            <div style={{ flexGrow: 2 }}></div>
+            <div style={{ margin: '0px 32px' }}>
+              <Typography variant='h6'>Table Selected</Typography>
+              <Typography variant='body2' color='textSecondary'>
+                Size: {renderTableType()}
+              </Typography>
+            </div>
+            <div style={{ marginRight: 32 }}>
+              <Typography variant='h6'>69</Typography>
+              <Typography variant='body2' color='textSecondary'>
+                (Reservation under an hour)
+              </Typography>
+            </div>
+            <Button disableRipple variant='contained' color='primary'>
+              Change...
+            </Button>
+          </div>
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Menu Order
           </Typography>
@@ -324,7 +372,7 @@ const CreateOrder = () => {
         <Button
           variant='contained'
           color='primary'
-          disabled={orders.length < 1}
+          disabled={orders.length < 1 || pic.length < 3}
           onClick={createOrder}
         >
           <b>Create Order</b>
