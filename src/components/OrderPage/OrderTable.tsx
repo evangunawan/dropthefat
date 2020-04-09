@@ -28,6 +28,7 @@ const TableHeader = () => {
         <TableCell>PIC</TableCell>
         <TableCell>Items</TableCell>
         <TableCell>Total</TableCell>
+        <TableCell>Status</TableCell>
         <TableCell>Actions</TableCell>
       </TableRow>
     </TableHead>
@@ -75,6 +76,7 @@ const OrderTable = (props: TableProps) => {
             <TableCell>{item.pic}</TableCell>
             <TableCell>{item.menuOrders.length}</TableCell>
             <TableCell>{renderCurrency(item.total)}</TableCell>
+            <TableCell>(STATUS HERE)</TableCell>
             <TableCell>
               <Tooltip title='View Details' arrow>
                 <IconButton

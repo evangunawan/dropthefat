@@ -152,36 +152,15 @@ const CreateOrder = () => {
   const [orders, setOrders] = React.useState<MenuOrder[]>([]); //Orders that added in the table.
   const [guests, setGuests] = React.useState(0); // Guest count
   const [tableList, setTableList] = React.useState<DiningTable[]>([]);
+  const [selectedTable, setSelectedTable] = React.useState<DiningTable>({
+    tableNumber: 0,
+    status: 'available',
+    type: 'small',
+  } as DiningTable);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
   const history = useHistory();
-
-  async function fetchMenu() {
-    const result: Menu[] = [];
-    await db
-      .collection('menu')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const newMenu: Menu = {
-            id: doc.id,
-            name: data.name,
-            type: data.type,
-            price: data.price as number,
-          };
-          console.log(`Loading ${newMenu.name} (${newMenu.id})`);
-          result.push(newMenu);
-        });
-      });
-    setMenuList(result);
-  }
-
-  React.useEffect(() => {
-    fetchMenu();
-    // eslint-disable-next-line
-  }, []);
 
   const formStyle: React.CSSProperties = {
     width: '100%',
@@ -211,6 +190,47 @@ const CreateOrder = () => {
     margin: '16px auto',
     alignSelf: 'center',
   };
+
+  async function fetchTables() {
+    const result: DiningTable[] = [];
+    await db
+      .collection('table')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const newTable: DiningTable = {
+            id: doc.id,
+            tableNumber: data.table_number,
+            status: data.status,
+            type: data.type,
+          };
+          result.push(newTable);
+        });
+      });
+    setTableList(result);
+  }
+
+  async function fetchMenu() {
+    const result: Menu[] = [];
+    await db
+      .collection('menu')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const newMenu: Menu = {
+            id: doc.id,
+            name: data.name,
+            type: data.type,
+            price: data.price as number,
+          };
+          console.log(`Loading ${newMenu.name} (${newMenu.id})`);
+          result.push(newMenu);
+        });
+      });
+    setMenuList(result);
+  }
 
   const addMenu = () => {
     setModalOpen(true);
@@ -272,14 +292,40 @@ const CreateOrder = () => {
     setOrders(temp);
   };
 
-  const renderTableType = () => {
-    if (guests < 5) return 'small';
-    else if (guests < 7) return 'medium';
+  const getTableType = (guestCount: number) => {
+    if (guestCount < 5) return 'small';
+    else if (guestCount < 7) return 'medium';
     else return 'large';
   };
 
-  if (menuList.length < 1) {
-    return <p>Loading Menu...</p>;
+  const generateSelectedTable = (guestCount: number) => {
+    const selectedSize = getTableType(guestCount);
+
+    tableList.some((item: DiningTable) => {
+      if (item.status !== 'unavailable' && item.status !== 'dining') {
+        if (item.type === selectedSize) {
+          setSelectedTable(item);
+          return true;
+        }
+      }
+      return false;
+    });
+  };
+
+  const handleGuestChange = (ev: any) => {
+    const guestCount = parseInt(ev.target.value);
+    setGuests(guestCount);
+    generateSelectedTable(guestCount);
+  };
+
+  React.useEffect(() => {
+    fetchMenu();
+    fetchTables();
+    // eslint-disable-next-line
+  }, []);
+
+  if (menuList.length < 1 && tableList.length < 1) {
+    return <FullScreenSpinner open={true} />;
   }
 
   return (
@@ -317,7 +363,9 @@ const CreateOrder = () => {
                 variant='outlined'
                 style={{ width: 300 }}
                 value={guests}
-                onChange={(ev) => setGuests(parseInt(ev.target.value))}
+                onChange={(ev) => {
+                  handleGuestChange(ev);
+                }}
               />
             </div>
             {/* This is a spacer */}
@@ -325,11 +373,11 @@ const CreateOrder = () => {
             <div style={{ margin: '0px 32px' }}>
               <Typography variant='h6'>Table Selected</Typography>
               <Typography variant='body2' color='textSecondary'>
-                Size: {renderTableType()}
+                Size: {selectedTable.type}
               </Typography>
             </div>
             <div style={{ marginRight: 32 }}>
-              <Typography variant='h6'>69</Typography>
+              <Typography variant='h6'>{selectedTable.tableNumber}</Typography>
               <Typography variant='body2' color='textSecondary'>
                 (Reservation under an hour)
               </Typography>
