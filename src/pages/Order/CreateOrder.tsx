@@ -12,6 +12,8 @@ import {
   TableCell,
   Button,
   IconButton,
+  Grid,
+  Box,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Menu } from '../../models/Menu';
@@ -158,6 +160,7 @@ const CreateOrder = () => {
     status: 'available',
     type: 'small',
   } as DiningTable);
+  const [tableMessage, setTableMessage] = React.useState(''); //State to save message and error message under selected table.
   const [modalOpen, setModalOpen] = React.useState(false);
   const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -319,9 +322,16 @@ const CreateOrder = () => {
       if (item.status !== 'unavailable' && item.status !== 'dining') {
         if (item.type === selectedSize) {
           setSelectedTable(item);
+          setTableMessage('');
           return true;
         }
       }
+      setTableMessage(`No available table at the moment with size ${selectedSize}`);
+      setSelectedTable({
+        status: 'unavailable',
+        type: 'unknown',
+        tableNumber: 0,
+      });
       return false;
     });
   };
@@ -385,26 +395,30 @@ const CreateOrder = () => {
             </div>
             {/* This is a spacer */}
             <div style={{ flexGrow: 2 }}></div>
-            <div style={{ margin: '0px 32px' }}>
-              <Typography variant='h6'>Table Selected</Typography>
-              <Typography variant='body2' color='textSecondary'>
-                Size: {selectedTable.type}
-              </Typography>
-            </div>
-            <div style={{ marginRight: 32 }}>
-              <Typography variant='h6'>{selectedTable.tableNumber}</Typography>
-              <Typography variant='body2' color='textSecondary'>
-                (Reservation under an hour)
-              </Typography>
-            </div>
-            <Button
-              disableRipple
-              variant='contained'
-              color='primary'
-              onClick={() => setTableModalOpen(true)}
-            >
-              Change...
-            </Button>
+            <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
+              <Grid container justify='flex-end' alignItems='center'>
+                <div style={{ margin: '0px 32px' }}>
+                  <Typography variant='h6'>Table Selected</Typography>
+                  <Typography variant='body2' color='textSecondary'>
+                    Size: {selectedTable.type}
+                  </Typography>
+                </div>
+                <div style={{ marginRight: 32 }}>
+                  <Typography variant='h6'>{selectedTable.tableNumber}</Typography>
+                </div>
+                <Button
+                  disableRipple
+                  variant='contained'
+                  color='primary'
+                  onClick={() => setTableModalOpen(true)}
+                >
+                  Change...
+                </Button>
+              </Grid>
+              <Box color='warning.main' fontSize='0.9em'>
+                {tableMessage}
+              </Box>
+            </Grid>
           </div>
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Menu Order
@@ -440,7 +454,12 @@ const CreateOrder = () => {
         <Button
           variant='contained'
           color='primary'
-          disabled={orders.length < 1 || pic.length < 3}
+          disabled={
+            orders.length < 1 ||
+            pic.length < 3 ||
+            guests === 0 ||
+            selectedTable.tableNumber === 0
+          }
           onClick={createOrder}
         >
           <b>Create Order</b>
