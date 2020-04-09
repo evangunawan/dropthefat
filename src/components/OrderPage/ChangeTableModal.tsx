@@ -5,9 +5,7 @@ import {
   Card,
   CardContent,
   Typography,
-  Box,
   Grid,
-  Paper,
   Button,
 } from '@material-ui/core';
 import { DiningTable } from '../../models/DiningTable';

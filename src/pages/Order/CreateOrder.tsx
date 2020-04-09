@@ -203,7 +203,7 @@ const CreateOrder = () => {
           const data = doc.data();
           const newTable: DiningTable = {
             id: doc.id,
-            tableNumber: data.table_number,
+            tableNumber: data.tableNumber,
             status: data.status,
             type: data.type,
           };
@@ -279,8 +279,20 @@ const CreateOrder = () => {
         menuOrders: mOrders,
         pic: pic || 'undefined',
         total: grandTotal,
+        guests: guests,
+        tableNumber: selectedTable.tableNumber,
+        status: 'active',
       });
+
+      await db
+        .collection('table')
+        .doc(selectedTable.id)
+        .update({
+          status: 'dining',
+        });
+
       setLoading(false);
+      history.push('/order');
     } catch (err) {
       console.error(err);
     }
@@ -316,8 +328,9 @@ const CreateOrder = () => {
 
   const handleGuestChange = (ev: any) => {
     const guestCount = parseInt(ev.target.value);
-    setGuests(guestCount);
-    generateSelectedTable(guestCount);
+
+    setGuests(guestCount || 0);
+    generateSelectedTable(guestCount || 0);
   };
 
   React.useEffect(() => {
