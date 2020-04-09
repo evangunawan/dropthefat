@@ -24,6 +24,7 @@ import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
 import { DiningTable } from '../../models/DiningTable';
+import ChangeTableModal from '../../components/OrderPage/ChangeTableModal';
 
 interface TableProps {
   orders: MenuOrder[];
@@ -158,6 +159,7 @@ const CreateOrder = () => {
     type: 'small',
   } as DiningTable);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
   const history = useHistory();
@@ -382,7 +384,12 @@ const CreateOrder = () => {
                 (Reservation under an hour)
               </Typography>
             </div>
-            <Button disableRipple variant='contained' color='primary'>
+            <Button
+              disableRipple
+              variant='contained'
+              color='primary'
+              onClick={() => setTableModalOpen(true)}
+            >
               Change...
             </Button>
           </div>
@@ -435,6 +442,13 @@ const CreateOrder = () => {
         onMenuAdd={(item) => {
           addSelectedMenu(item);
         }}
+      />
+      <ChangeTableModal
+        open={tableModalOpen}
+        tableList={tableList}
+        guests={guests}
+        onClose={() => setTableModalOpen(false)}
+        onTableSelect={(item: DiningTable) => setSelectedTable(item)}
       />
       <FullScreenSpinner open={loading} />
     </Container>
