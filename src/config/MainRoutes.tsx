@@ -10,6 +10,7 @@ import MenuPage from '../pages/MenuPage';
 import TableManagement from '../pages/Admin/Tables/TableManagement';
 import MenuManagement from '../pages/Admin/Menu/MenuManagement';
 import CreateMenu from '../pages/Admin/Menu/CreateMenu';
+import UpdateMenu from '../pages/Admin/Menu/UpdateMenu';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -33,6 +34,7 @@ export default class MainRoutes extends React.Component {
                 <Route path={`${match.url}/dashboard`} component={AdminDashboard} />
                 <Route path={`${match.url}/tables`} component={TableManagement} />
                 <Route exact path={`${match.url}/menu`} component={MenuManagement} />
+                <Route path={`${match.url}/menu/update/:id`} component={UpdateMenu} />
                 <Route path={`${match.url}/menu/create`} component={CreateMenu} />
               </div>
             )}

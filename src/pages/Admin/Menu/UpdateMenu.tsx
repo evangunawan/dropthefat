@@ -1,17 +1,19 @@
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
+
+import Container from '../../../components/Container';
 import {
   Typography,
   TextField,
-  Select,
-  MenuItem,
   FormControl,
   InputLabel,
+  MenuItem,
+  Select,
   Button,
 } from '@material-ui/core';
-import Container from '../../../components/Container';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import { Menu } from '../../../models/Menu';
 import FullScreenSpinner from '../../../components/FullScreenSpinner';
 
 const fieldBody: React.CSSProperties = {
@@ -24,36 +26,79 @@ const fieldBody: React.CSSProperties = {
   width: 500,
 };
 
-const CreateMenu = () => {
+const UpdateMenu = () => {
   const history = useHistory();
   const [menuName, setMenuName] = React.useState('');
   const [menuType, setMenuType] = React.useState('');
-  const [menuPrice, setMenuPrice] = React.useState('');
+  const [menuPrice, setMenuPrice] = React.useState(0);
+  const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-
-  const addMenuToFirebase = async () => {
-    const db = firebase.firestore();
-    let intPrice = 0;
-    try {
-      intPrice = parseInt(menuPrice);
-    } catch (err) {
-      alert('Please input a number in price!');
-      return;
-    }
-    setLoading(true);
-    await db.collection('menu').add({
-      name: menuName,
-      type: menuType,
-      price: intPrice,
-    });
-    setLoading(false);
-    history.push('/admin/menu');
-  };
+  let { id } = useParams();
 
   const handleSelectChange = (ev: any) => {
     setMenuType(ev.target.value);
     // console.log(menuSelect);
   };
+
+  const handlePriceChange = (ev: any) => {
+    const price = parseInt(ev.target.value) || 0;
+    setMenuPrice(price);
+  };
+
+  const fetchMenu = async (menuId: string) => {
+    const db = firebase.firestore();
+    let result: Menu = {} as Menu;
+    if (menuId === 'null' || menuId.length < 2) {
+      setError(true);
+      return;
+    }
+    setLoading(true);
+    await db
+      .collection('menu')
+      .doc(`${menuId}`)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          console.log(doc.data());
+          const newMenu: Menu = {
+            id: doc.id,
+            name: doc.data()?.name,
+            type: doc.data()?.type || 'drink',
+            price: doc.data()?.price,
+          };
+          result = newMenu;
+        } else {
+          setError(true);
+        }
+      });
+    setMenuName(result.name);
+    setMenuType(result.type);
+    setMenuPrice(result.price);
+    setLoading(false);
+  };
+
+  const updateMenu = async (menuId: string) => {
+    const db = firebase.firestore();
+    setLoading(true);
+    await db
+      .collection('menu')
+      .doc(`${menuId}`)
+      .update({
+        name: menuName,
+        type: menuType,
+        price: menuPrice,
+      });
+    setLoading(false);
+    history.push('/admin/menu');
+  };
+
+  React.useEffect(() => {
+    fetchMenu(id || 'null');
+  }, []);
+
+  if (error) {
+    return <div>Bad Menu ID, or not found.</div>;
+  }
 
   return (
     <Container width='500px'>
@@ -64,7 +109,7 @@ const CreateMenu = () => {
 
         <fieldset style={fieldBody}>
           <legend style={{ width: 150, display: 'flex', justifyContent: 'center' }}>
-            Add New Menu
+            Update Menu
           </legend>
           <TextField
             variant='outlined'
@@ -98,16 +143,16 @@ const CreateMenu = () => {
             style={{ marginBottom: 20, width: 500 }}
             type='number'
             value={menuPrice}
-            onChange={(ev) => setMenuPrice(ev.target.value)}
+            onChange={(ev) => handlePriceChange(ev)}
           ></TextField>
 
           <Button
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
-            onClick={addMenuToFirebase}
+            onClick={() => updateMenu(id || 'null')}
           >
-            ADD
+            UPDATE
           </Button>
         </fieldset>
       </div>
@@ -116,4 +161,4 @@ const CreateMenu = () => {
   );
 };
 
-export default CreateMenu;
+export default UpdateMenu;

@@ -18,6 +18,8 @@ import {
 import Container from '../../../components/Container';
 import { Add } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Menu } from '../../../models/Menu';
+import FullScreenSpinner from '../../../components/FullScreenSpinner';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -47,15 +49,29 @@ const MenuManagement = () => {
   const location = useLocation();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [menu, setMenu] = React.useState([] as any[]);
+  const [menu, setMenu] = React.useState<Menu[]>([]);
   const [txtSearch, setTxtSearch] = React.useState('');
   const [filterMenu, setFilterMenu] = React.useState([] as any[]);
+  const [loading, setLoading] = React.useState(false);
 
   const searchBarStyle: React.CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: '20px 0px',
+  };
+
+  const deleteMenu = async (menu: Menu) => {
+    const res = window.confirm(`Are you sure want to delete ${menu.name}?`);
+    if (res === true) {
+      const db = firebase.firestore();
+      setLoading(true);
+      await db
+        .collection('menu')
+        .doc(menu.id)
+        .delete();
+      window.location.reload();
+    }
   };
 
   const handleSearchMenu = (ev: any) => {
@@ -72,6 +88,7 @@ const MenuManagement = () => {
   ) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -81,18 +98,27 @@ const MenuManagement = () => {
 
   const getMenuList = async () => {
     const db = firebase.firestore();
-    const result: any[] = [] as any[];
+    const result: Menu[] = [];
+    setLoading(true);
     await db
       .collection('menu')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          result.push(doc.data());
+          const newMenu: Menu = {
+            id: doc.id,
+            name: doc.data().name,
+            type: doc.data().type || 'drink',
+            price: doc.data().price,
+          };
+
+          result.push(newMenu);
           // console.log(doc.data());
         });
       });
     setMenu(result);
     setFilterMenu(result);
+    setLoading(false);
   };
 
   const renderMenuType = (val: string) => {
@@ -101,18 +127,27 @@ const MenuManagement = () => {
     else if (val === 'dessert') return 'Dessert';
   };
 
-  const renderTableBody = (items: any[]) => {
+  const updateMenu = (item: Menu) => {
+    history.push(`/admin/menu/update/${item.id}`);
+  };
+
+  const renderTableBody = (items: Menu[]) => {
     const result = items
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((item: any, k) => {
+      .map((item: Menu, k) => {
         return (
           <TableRow key={k}>
             <TableCell>{item.name}</TableCell>
             <TableCell>{renderMenuType(item.type)}</TableCell>
             <TableCell>{item.price}</TableCell>
             <TableCell style={{ textAlign: 'center' }}>
-              <Button color='primary'>Update</Button> |{' '}
-              <Button color='secondary'>Delete</Button>
+              <Button color='primary' onClick={() => updateMenu(item)}>
+                Update
+              </Button>{' '}
+              |
+              <Button color='secondary' onClick={() => deleteMenu(item)}>
+                Delete
+              </Button>
             </TableCell>
           </TableRow>
         );
@@ -167,6 +202,7 @@ const MenuManagement = () => {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <FullScreenSpinner open={loading} />
     </Container>
   );
 };
