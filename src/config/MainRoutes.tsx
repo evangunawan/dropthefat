@@ -7,6 +7,7 @@ import OrderPage from '../pages/Order/OrderPage';
 import CreateOrder from '../pages/Order/CreateOrder';
 import ManageExpenditure from '../pages/Expenditure/ManageExpenditure';
 import AddIngredient from '../pages/Expenditure/AddIngredient';
+import DeleteIngredient from '../pages/Expenditure/DeleteIngredient';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -19,6 +20,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/expenditure' component={ManageExpenditure} />
           <Route exact path='/expenditure/add' component={AddIngredient} />
+          <Route exact path='/expenditure/delete' component={DeleteIngredient} />
         </Switch>
       </div>
     );

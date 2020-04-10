@@ -82,6 +82,17 @@ export class ManageExpenditure extends React.Component<{}, MenuState> {
           </Table>
         </TableContainer>
         &nbsp;
+        <Link to="/expenditure/delete">
+            <div style={btnGroupStyle}>
+               <Button
+                  variant='contained'
+                  color='secondary'
+                  style={{ fontWeight: 'bold', marginLeft: 'auto' }}
+               >
+               Delete Ingredient
+               </Button>
+            </div>
+         </Link>
          <Link to="/expenditure/add">
             <div style={btnGroupStyle}>
                <Button

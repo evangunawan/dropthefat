@@ -51,7 +51,7 @@ export class AddIngredient extends React.Component<{}, { ready: boolean, id: str
 
   async addIngredientToDB() {
     const db = firebase.firestore();
-    db.collection('ingredient').doc().set({
+    db.collection('ingredient').doc(this.state.id).set({
         id: this.state.id,
         name: this.state.name,
         price: this.state.price
@@ -75,37 +75,16 @@ export class AddIngredient extends React.Component<{}, { ready: boolean, id: str
       );
     }
 
-    const btnGroupStyle: React.CSSProperties = {
-       width: '100%',
-       display: 'flex',
-       justifyContent: 'flex-end',
-     };
-
-    const formStyle: React.CSSProperties = {
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'flex-start',
-      // flexWrap: 'wrap',
-      padding: '16px 0',
-    };
-
     return (
       <Container>
         <h1>Ingredients</h1>
-        <form onSubmit={this.handleSubmit} style={formStyle}>
-          <label>
-            Id :
-            <input type="text" value={this.state.id} onChange={this.handleChangeId}/>
-          </label>
-          <label>
-            Name :
-            <input type="text" value={this.state.name} onChange={this.handleChangeName}/>
-          </label>
-          <label>
-            Price :
-            <input type="text" value={this.state.price}  onChange={this.handleChangePrice}/>
-          </label>
+        <form onSubmit={this.handleSubmit}>
+          <label>Id :   </label>
+          <input type="text" value={this.state.id} onChange={this.handleChangeId}/>
+          <label>Name :   </label>
+          <input type="text" value={this.state.name} onChange={this.handleChangeName}/>
+          <label>Price :  </label>
+          <input type="text" value={this.state.price}  onChange={this.handleChangePrice}/>
           <input type="submit" value="Submit" />
         </form>
       </Container>
