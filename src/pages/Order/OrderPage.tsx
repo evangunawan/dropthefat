@@ -68,6 +68,8 @@ const OrderPage = () => {
             pic: data.pic,
             time: data.time,
             total: data.total,
+            guests: data.guests,
+            status: data.status || 'undefined',
           };
 
           result.push(newOrder);

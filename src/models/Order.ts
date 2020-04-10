@@ -6,4 +6,8 @@ export interface Order {
   menuOrders: MenuOrder[];
   pic: string;
   total: number;
+  status: 'completed' | 'active' | 'undefined';
+  guests: number;
+  paymentTime?: number;
+  tableNumber?: number;
 }

@@ -8,7 +8,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  TableFooter,
   TablePagination,
   IconButton,
   Tooltip,
@@ -29,6 +28,7 @@ const TableHeader = () => {
         <TableCell>PIC</TableCell>
         <TableCell>Items</TableCell>
         <TableCell>Total</TableCell>
+        <TableCell>Status</TableCell>
         <TableCell>Actions</TableCell>
       </TableRow>
     </TableHead>
@@ -45,6 +45,8 @@ const OrderTable = (props: TableProps) => {
     menuOrders: [],
     pic: 'null',
     time: 0,
+    status: 'undefined',
+    guests: 0,
     total: 0,
   };
   const [modalItem, setModalItem] = React.useState<Order>(defaultOrder);
@@ -76,6 +78,7 @@ const OrderTable = (props: TableProps) => {
             <TableCell>{item.pic}</TableCell>
             <TableCell>{item.menuOrders.length}</TableCell>
             <TableCell>{renderCurrency(item.total)}</TableCell>
+            <TableCell>{item.status}</TableCell>
             <TableCell>
               <Tooltip title='View Details' arrow>
                 <IconButton
