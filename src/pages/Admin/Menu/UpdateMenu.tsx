@@ -94,6 +94,7 @@ const UpdateMenu = () => {
 
   React.useEffect(() => {
     fetchMenu(id || 'null');
+    // eslint-disable-next-line
   }, []);
 
   if (error) {

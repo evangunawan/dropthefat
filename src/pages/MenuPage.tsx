@@ -9,14 +9,12 @@ import {
   TableRow,
   TableCell,
   Paper,
-  TableFooter,
   TablePagination,
   Typography,
   withStyles,
   TextField,
 } from '@material-ui/core';
 import Container from '../components/Container';
-import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 const StyledTableCell = withStyles(() => ({
   head: {
