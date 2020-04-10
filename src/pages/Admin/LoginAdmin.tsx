@@ -27,11 +27,10 @@ const LoginAdmin = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    height: '90vh',
   };
   const cardStyle: CSSProperties = {
     width: '500px',
-    height: 'auto',
     padding: 16,
   };
 

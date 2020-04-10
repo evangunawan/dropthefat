@@ -18,6 +18,8 @@ import {
   Business,
   ShoppingCart,
   Receipt,
+  MonetizationOn,
+  EventSeat,
 } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -102,24 +104,41 @@ const MainDrawer = (props: DrawerProps) => {
 
   const renderDrawer = () => {
     return (
-      <List>
-        <DrawerItem text='Home' link='/' icon={<Home />} onLink={props.onClose} />
-        <DrawerItem
-          text='Order'
-          link='/order'
-          icon={<Description />}
-          onLink={props.onClose}
-        />
-        <DrawerItem
-          text='Food Menu'
-          link='/menu'
-          icon={<RestaurantMenu />}
-          onLink={props.onClose}
-        />
-      </List>
+      <div>
+        <List>
+          <DrawerItem text='Home' link='/' icon={<Home />} onLink={props.onClose} />
+        </List>
+        <List subheader={<ListSubheader>Waiters</ListSubheader>}>
+          <DrawerItem
+            text='Order'
+            link='/order'
+            icon={<Description />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Food Menu'
+            link='/menu'
+            icon={<RestaurantMenu />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Reservation'
+            link='/reservation'
+            icon={<EventSeat />}
+            onLink={props.onClose}
+          />
+        </List>
+        <List subheader={<ListSubheader>Cashier</ListSubheader>}>
+          <DrawerItem
+            text='Payment'
+            link='/payment'
+            icon={<MonetizationOn />}
+            onLink={props.onClose}
+          />
+        </List>
+      </div>
     );
   };
-
   return (
     <Drawer anchor='left' open={props.open} onClose={props.onClose}>
       <Box style={{ height: 64, display: 'flex', alignItems: 'center' }}>
