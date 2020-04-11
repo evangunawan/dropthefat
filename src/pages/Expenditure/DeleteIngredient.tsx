@@ -31,8 +31,8 @@ export class DeleteIngredient extends React.Component<{}, { ready: boolean, list
 
   delIngredientInDB(){
     const db = firebase.firestore();
-    // db.collection('ingredient').doc(this.state.id).delete();
-    db.collection('ingredient').doc().delete();
+    db.collection('ingredient').doc(this.state.id).delete();
+    // db.collection('ingredient').doc().delete();
 
     this.setState({ success: true });
   }
