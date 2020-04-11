@@ -22,7 +22,7 @@ import { Material } from '../models/Material';
 
 
 function Buy(){
-  const [material] = React.useState<Material[]>([]);
+  const [material,setMaterial] = React.useState<Material[]>([]);
   const fetchOrder = async () => {
     const db = firebase.firestore();
     const result: Material[] = [] as Material[];
@@ -40,12 +40,14 @@ function Buy(){
           };
   
           result.push(newOrder);
+          setMaterial(result);
         });
       });
   
     console.log(result);
-  
   };
+
+
   React.useEffect(() => {
     fetchOrder();
     // eslint-disable-next-line
