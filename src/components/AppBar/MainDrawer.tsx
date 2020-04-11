@@ -71,8 +71,8 @@ const MainDrawer = (props: DrawerProps) => {
             />
 
           <DrawerItem
-            text='Payment'
-            link='/payment'
+            text='Buy Material'
+            link='/buy'
             icon={<MoneyOutlined/>}
             onLink={props.onClose}
             />

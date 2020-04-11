@@ -5,7 +5,7 @@ import Home from '../pages/Home';
 import OrderPage from '../pages/Order/OrderPage';
 import CreateOrder from '../pages/Order/CreateOrder';
 import MenuPage from '../pages/MenuPage';
-import Payment from '../pages/Payment';
+import Buy from '../pages/Buy';
 import PaymentCheckout from '../pages/PaymentCheckout';
 import Employee from '../pages/Employee';
 
@@ -19,7 +19,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/employee' component={Employee}/>
-          <Route exact path='/payment' component={Payment}/>
+          <Route exact path='/payment' component={Buy}/>
           <Route exact path='/payment/check' component={PaymentCheckout}/>
         </Switch>
       </div>
