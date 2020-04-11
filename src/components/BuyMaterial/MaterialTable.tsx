@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Order } from '../../models/Order';
+import { Material } from '../../models/Material';
 import {
   TableContainer,
   Paper,
@@ -23,17 +23,15 @@ import {
 
 
 interface TableProps {
-  items: Order[];
+  items: Material[];
 }
 
 const TableHeader = () => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>Time</TableCell>
-        <TableCell>PIC</TableCell>
-        <TableCell>Items</TableCell>
-        <TableCell>Total</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Harga</TableCell>
         <TableCell>Actions</TableCell>
       </TableRow>
     </TableHead>
@@ -45,14 +43,12 @@ const PaymentTable = (props: TableProps) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  const defaultOrder: Order = {
+  const defaultMaterial: Material = {
     id: 'undefined',
-    menuOrders: [],
-    pic: 'null',
-    time: 0,
-    total: 0,
+    name: 'null',
+    price: 0
   };
-  const [modalItem, setModalItem] = React.useState<Order>(defaultOrder);
+  const [modalItem, setModalItem] = React.useState<Material>(defaultMaterial);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -67,7 +63,7 @@ const PaymentTable = (props: TableProps) => {
     setPage(0);
   };
 
-  const showMenuModal = (item: Order) => {
+  const showMaterialModal = (item: Material) => {
     setModalOpen(true);
     setModalItem(item);
   };
@@ -77,25 +73,23 @@ const PaymentTable = (props: TableProps) => {
   };
 
   const history = useHistory();
-  const payOrder = () =>{
-    history.push('/payment/checkout');
-  };
+  // const payOrder = () =>{
+  //   history.push('/payment/checkout');
+  // };
 
-  const renderTableBody = (items: Order[]) => {
-    const tableBody = items.map((item: Order, k) => {
+  const renderTableBody = (items: Material[]) => {
+    const tableBody = items.map((item: Material, k) => {
       return (
         <TableRow key={k}>
-          <TableCell>{renderTime(item.time)}</TableCell>
-          <TableCell>{item.pic}</TableCell>
-          <TableCell>{item.menuOrders.length}</TableCell>
-          <TableCell>{renderCurrency(item.total)}</TableCell>
+          <TableCell>{item.name}</TableCell>
+          <TableCell>{renderCurrency(item.price)}</TableCell>
           <TableCell>
           <Button
           variant='contained'
           color='primary'
-          onClick={payOrder}
+          // onClick={payOrder}
             >
-            <b>Pay</b>
+            <b>Buy</b>
             </Button>
           </TableCell>
         </TableRow>
@@ -129,13 +123,6 @@ const PaymentTable = (props: TableProps) => {
           </TableRow>
         </TableFooter>
       </Table>
-      <OrderMenuModal
-        open={modalOpen}
-        order={modalItem}
-        onClose={() => {
-          handleCloseModal();
-        }}
-      />
     </TableContainer>
   );
 };

@@ -17,37 +17,32 @@ import {
 } from '@material-ui/core';
 import Container from '../components/Container';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
-import PaymentTable from '../components/PaymentPage/PaymentTable';
-import { Order } from '../models/Order';
-import { MenuOrder } from '../models/MenuOrder';
+import MaterialTable from '../components/BuyMaterial/MaterialTable';
+import { Material } from '../models/Material';
 
 
-function Payment(){
-  const [order, setOrder] = React.useState<Order[]>([]);
+function Buy(){
+  const [material] = React.useState<Material[]>([]);
   const fetchOrder = async () => {
     const db = firebase.firestore();
-    const result: Order[] = [] as Order[];
+    const result: Material[] = [] as Material[];
     await db
-      .collection('order')
+      .collection('ingredient')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const orderMenus: MenuOrder[] = [];
   
-          const newOrder: Order = {
+          const newOrder: Material = {
             id: doc.id,
-            menuOrders: orderMenus,
-            pic: data.pic,
-            time: data.time,
-            total: data.total,
+            name:data.name,
+            price: data.price
           };
   
           result.push(newOrder);
         });
       });
   
-    setOrder(result);
     console.log(result);
   
   };
@@ -63,17 +58,17 @@ function Payment(){
       >
         <div>
           <Typography variant='h4' component='h2'>
-            Order List
+            Material List
           </Typography>
           <Typography variant='body2' component='span'>
-            Here is the list of orders in restaurant.
+            Here is the list of Material.
           </Typography>
         </div>
       </div>
-      <PaymentTable items={order} />
+      <MaterialTable items={material} />
     </Container>
     );
 
 };
 
-export default Payment
+export default Buy

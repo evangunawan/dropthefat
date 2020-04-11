@@ -19,7 +19,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/menu' component={MenuPage} />
           <Route exact path='/order/create' component={CreateOrder} />
           <Route exact path='/employee' component={Employee}/>
-          <Route exact path='/payment' component={Buy}/>
+          <Route exact path='/buy' component={Buy}/>
           <Route exact path='/payment/check' component={PaymentCheckout}/>
         </Switch>
       </div>
