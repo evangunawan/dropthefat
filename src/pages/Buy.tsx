@@ -23,6 +23,7 @@ import { Material } from '../models/Material';
 
 function Buy(){
   const [material,setMaterial] = React.useState<Material[]>([]);
+  
   const fetchOrder = async () => {
     const db = firebase.firestore();
     const result: Material[] = [] as Material[];
@@ -33,13 +34,13 @@ function Buy(){
         querySnapshot.forEach((doc) => {
           const data = doc.data();
   
-          const newOrder: Material = {
+          const newMaterial: Material = {
             id: doc.id,
             name:data.name,
             price: data.price
           };
   
-          result.push(newOrder);
+          result.push(newMaterial);
           setMaterial(result);
         });
       });
