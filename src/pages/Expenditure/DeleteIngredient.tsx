@@ -96,10 +96,11 @@ export class DeleteIngredient extends React.Component<{}, { ready: boolean, list
         <Container>
          <label>Choose ingredient: </label>
           <select id="name" onChange={this.handleChangeName}>
+            <option>---Choose Ingredient---</option>
             {items}
           </select>
-          <button onClick={this.delIngredientInDB}>submit 2</button>
-          <p>{this.state.id}</p>
+          <button onClick={this.delIngredientInDB}>Delete</button>
+          <p>id   : {this.state.id}</p>
         </Container> 
       );
     }else{
