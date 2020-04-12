@@ -107,7 +107,7 @@ const MaterialTable = (props: TableProps) => {
         <TableHead>
           <TableRow>
             <TableCell>
-              <b>Material Name</b>
+              <b>Ingredient</b>
             </TableCell>
             <TableCell>
               <b>Price</b>
@@ -296,7 +296,7 @@ const Buy = () => {
           />
 
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
-            Menu Order
+           Ingredient Order
           </Typography>
           <MaterialTable
             purchases={purchase}
@@ -311,7 +311,7 @@ const Buy = () => {
             style={buttonStyle}
             onClick={addMaterial}
           >
-            <b>ADD MATERIAL</b>
+            <b>ADD INGREDIENT</b>
           </Button>
         </form>
       </div>
