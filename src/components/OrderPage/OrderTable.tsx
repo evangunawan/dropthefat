@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import { Order } from '../../models/Order';
 import {
   TableContainer,
@@ -12,12 +14,15 @@ import {
   IconButton,
   Tooltip,
 } from '@material-ui/core';
-import { List } from '@material-ui/icons';
+import { List, Payment } from '@material-ui/icons';
 import OrderMenuModal from './OrderMenuModal';
 import { renderCurrency, renderTime } from '../../util/RenderUtil';
+import PaymentModal from './PaymentModal';
+import FullScreenSpinner from '../FullScreenSpinner';
 
 interface TableProps {
   items: Order[];
+  onRefreshItems(): void;
 }
 
 const TableHeader = () => {
@@ -39,6 +44,8 @@ const OrderTable = (props: TableProps) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const defaultOrder: Order = {
     id: 'undefined',
@@ -49,7 +56,18 @@ const OrderTable = (props: TableProps) => {
     guests: 0,
     total: 0,
   };
+  //ModalItem is current item selected to fill the modals.
   const [modalItem, setModalItem] = React.useState<Order>(defaultOrder);
+
+  const showMenuModal = (item: Order) => {
+    setModalOpen(true);
+    setModalItem(item);
+  };
+
+  const showPaymentModal = (item: Order) => {
+    setPaymentModalOpen(true);
+    setModalItem(item);
+  };
 
   const handleChangePage = (event: unknown | null, newPage: number) => {
     setPage(newPage);
@@ -59,9 +77,32 @@ const OrderTable = (props: TableProps) => {
     setPage(0);
   };
 
-  const showMenuModal = (item: Order) => {
-    setModalOpen(true);
-    setModalItem(item);
+  const handlePaymentSubmit = async () => {
+    const db = firebase.firestore();
+    setLoading(true);
+    console.log('Updating Order ' + modalItem.id);
+    await db
+      .collection('order')
+      .doc(modalItem.id)
+      .update({
+        status: 'completed',
+      })
+      .catch((err) => console.log(err));
+
+    console.log('Updating Table ' + modalItem.tableNumber);
+    await db
+      .collection('table')
+      .where('tableNumber', '==', modalItem.tableNumber || 0)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            status: 'available',
+          });
+        });
+      });
+    setLoading(false);
+    props.onRefreshItems();
   };
 
   const handleCloseModal = () => {
@@ -91,6 +132,19 @@ const OrderTable = (props: TableProps) => {
                   <List />
                 </IconButton>
               </Tooltip>
+              {item.status === 'active' ? (
+                <Tooltip title='Make Payment' arrow>
+                  <IconButton
+                    aria-label='Payment'
+                    style={{ width: 50 }}
+                    onClick={() => {
+                      showPaymentModal(item);
+                    }}
+                  >
+                    <Payment />
+                  </IconButton>
+                </Tooltip>
+              ) : null}
             </TableCell>
           </TableRow>
         );
@@ -118,11 +172,20 @@ const OrderTable = (props: TableProps) => {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <FullScreenSpinner open={loading} />
       <OrderMenuModal
         open={modalOpen}
         order={modalItem}
         onClose={() => {
           handleCloseModal();
+        }}
+      />
+      <PaymentModal
+        open={paymentModalOpen}
+        order={modalItem}
+        onClose={() => setPaymentModalOpen(false)}
+        onSubmit={() => {
+          handlePaymentSubmit();
         }}
       />
     </div>
