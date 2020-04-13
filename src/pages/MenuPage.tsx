@@ -76,6 +76,7 @@ const MenuPage = () => {
     const result: any[] = [] as any[];
     await db
       .collection('menu')
+      .where('deleted', '==', false)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
