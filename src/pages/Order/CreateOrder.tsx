@@ -12,6 +12,8 @@ import {
   TableCell,
   Button,
   IconButton,
+  Grid,
+  Box,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Menu } from '../../models/Menu';
@@ -23,11 +25,13 @@ import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
+import { DiningTable } from '../../models/DiningTable';
+import ChangeTableModal from '../../components/OrderPage/ChangeTableModal';
 
 interface TableProps {
   orders: MenuOrder[];
-  onDelete(item: MenuOrder): any;
-  onQtyChange(ev: any, item: MenuOrder): any;
+  onDelete(item: MenuOrder): void;
+  onQtyChange(ev: any, item: MenuOrder): void;
 }
 
 const MenuTable = (props: TableProps) => {
@@ -149,36 +153,19 @@ const CreateOrder = () => {
   const [pic, setPic] = React.useState('');
   const [menuList, setMenuList] = React.useState<Menu[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
   const [orders, setOrders] = React.useState<MenuOrder[]>([]); //Orders that added in the table.
+  const [guests, setGuests] = React.useState(0); // Guest count
+  const [tableList, setTableList] = React.useState<DiningTable[]>([]);
+  const [selectedTable, setSelectedTable] = React.useState<DiningTable>({
+    tableNumber: 0,
+    status: 'available',
+    type: 'small',
+  } as DiningTable);
+  const [tableMessage, setTableMessage] = React.useState(''); //State to save message and error message under selected table.
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
   const history = useHistory();
-
-  async function fetchMenu() {
-    const result: Menu[] = [];
-    await db
-      .collection('menu')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const newMenu: Menu = {
-            id: doc.id,
-            name: data.name,
-            type: data.type,
-            price: data.price as number,
-          };
-          console.log(`Loading ${newMenu.name} (${newMenu.id})`);
-          result.push(newMenu);
-        });
-      });
-    setMenuList(result);
-  }
-
-  React.useEffect(() => {
-    fetchMenu();
-    // eslint-disable-next-line
-  }, []);
 
   const formStyle: React.CSSProperties = {
     width: '100%',
@@ -208,6 +195,48 @@ const CreateOrder = () => {
     margin: '16px auto',
     alignSelf: 'center',
   };
+
+  async function fetchTables() {
+    const result: DiningTable[] = [];
+    await db
+      .collection('table')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const newTable: DiningTable = {
+            id: doc.id,
+            tableNumber: data.tableNumber,
+            status: data.status,
+            type: data.type,
+          };
+          result.push(newTable);
+        });
+      });
+    setTableList(result);
+  }
+
+  async function fetchMenu() {
+    const result: Menu[] = [];
+    await db
+      .collection('menu')
+      .where('deleted', '==', false)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const newMenu: Menu = {
+            id: doc.id,
+            name: data.name,
+            type: data.type,
+            price: data.price as number,
+          };
+          console.log(`Loading ${newMenu.name} (${newMenu.id})`);
+          result.push(newMenu);
+        });
+      });
+    setMenuList(result);
+  }
 
   const addMenu = () => {
     setModalOpen(true);
@@ -254,8 +283,20 @@ const CreateOrder = () => {
         menuOrders: mOrders,
         pic: pic || 'undefined',
         total: grandTotal,
+        guests: guests,
+        tableNumber: selectedTable.tableNumber,
+        status: 'active',
       });
+
+      await db
+        .collection('table')
+        .doc(selectedTable.id)
+        .update({
+          status: 'dining',
+        });
+
       setLoading(false);
+      history.push('/order');
     } catch (err) {
       console.error(err);
     }
@@ -269,8 +310,48 @@ const CreateOrder = () => {
     setOrders(temp);
   };
 
-  if (menuList.length < 1) {
-    return <p>Loading Menu...</p>;
+  const getTableType = (guestCount: number) => {
+    if (guestCount < 5) return 'small';
+    else if (guestCount < 7) return 'medium';
+    else return 'large';
+  };
+
+  const generateSelectedTable = (guestCount: number) => {
+    const selectedSize = getTableType(guestCount);
+
+    tableList.some((item: DiningTable) => {
+      if (item.status !== 'unavailable' && item.status !== 'dining') {
+        if (item.type === selectedSize) {
+          setSelectedTable(item);
+          setTableMessage('');
+          return true;
+        }
+      }
+      setTableMessage(`No available table at the moment with size ${selectedSize}`);
+      setSelectedTable({
+        status: 'unavailable',
+        type: 'unknown',
+        tableNumber: 0,
+      });
+      return false;
+    });
+  };
+
+  const handleGuestChange = (ev: any) => {
+    const guestCount = parseInt(ev.target.value);
+
+    setGuests(guestCount || 0);
+    generateSelectedTable(guestCount || 0);
+  };
+
+  React.useEffect(() => {
+    fetchMenu();
+    fetchTables();
+    // eslint-disable-next-line
+  }, []);
+
+  if (menuList.length < 1 && tableList.length < 1) {
+    return <FullScreenSpinner open={true} />;
   }
 
   return (
@@ -284,12 +365,62 @@ const CreateOrder = () => {
       <div>
         <form style={formStyle}>
           <TextField
+            required
             fullWidth
             label='Person in charge'
             variant='outlined'
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'start',
+              alignItems: 'center',
+              padding: '16px 0px',
+            }}
+          >
+            <div>
+              <TextField
+                required
+                fullWidth
+                label='Guest count'
+                type='number'
+                variant='outlined'
+                style={{ width: 300 }}
+                value={guests}
+                onChange={(ev) => {
+                  handleGuestChange(ev);
+                }}
+              />
+            </div>
+            {/* This is a spacer */}
+            <div style={{ flexGrow: 2 }}></div>
+            <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
+              <Grid container justify='flex-end' alignItems='center'>
+                <div style={{ margin: '0px 32px' }}>
+                  <Typography variant='h6'>Table Selected</Typography>
+                  <Typography variant='body2' color='textSecondary'>
+                    Size: {selectedTable.type}
+                  </Typography>
+                </div>
+                <div style={{ marginRight: 32 }}>
+                  <Typography variant='h6'>{selectedTable.tableNumber}</Typography>
+                </div>
+                <Button
+                  disableRipple
+                  variant='contained'
+                  color='primary'
+                  onClick={() => setTableModalOpen(true)}
+                >
+                  Change...
+                </Button>
+              </Grid>
+              <Box color='warning.main' fontSize='0.9em'>
+                {tableMessage}
+              </Box>
+            </Grid>
+          </div>
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Menu Order
           </Typography>
@@ -324,7 +455,12 @@ const CreateOrder = () => {
         <Button
           variant='contained'
           color='primary'
-          disabled={orders.length < 1}
+          disabled={
+            orders.length < 1 ||
+            pic.length < 3 ||
+            guests === 0 ||
+            selectedTable.tableNumber === 0
+          }
           onClick={createOrder}
         >
           <b>Create Order</b>
@@ -339,6 +475,13 @@ const CreateOrder = () => {
         onMenuAdd={(item) => {
           addSelectedMenu(item);
         }}
+      />
+      <ChangeTableModal
+        open={tableModalOpen}
+        tableList={tableList}
+        guests={guests}
+        onClose={() => setTableModalOpen(false)}
+        onTableSelect={(item: DiningTable) => setSelectedTable(item)}
       />
       <FullScreenSpinner open={loading} />
     </Container>

@@ -68,14 +68,16 @@ const OrderPage = () => {
             pic: data.pic,
             time: data.time,
             total: data.total,
+            guests: data.guests,
+            status: data.status || 'undefined',
           };
 
           result.push(newOrder);
         });
       });
-
+    result.sort((a, b) => (a.time > b.time ? -1 : b.time > a.time ? 1 : 0));
     setOrder(result);
-    console.log(result);
+    // console.log(result);
   };
 
   React.useEffect(() => {

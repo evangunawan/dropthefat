@@ -13,8 +13,13 @@ import {
   Typography,
   withStyles,
   TextField,
+  Button,
 } from '@material-ui/core';
-import Container from '../components/Container';
+import Container from '../../../components/Container';
+import { Add } from '@material-ui/icons';
+import { useHistory, useLocation } from 'react-router-dom';
+import { Menu } from '../../../models/Menu';
+import FullScreenSpinner from '../../../components/FullScreenSpinner';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -31,23 +36,46 @@ const TableHeader = () => {
         <StyledTableCell>Food Name</StyledTableCell>
         <StyledTableCell>Food Type</StyledTableCell>
         <StyledTableCell>Price</StyledTableCell>
+        <StyledTableCell style={{ width: 200, textAlign: 'center' }}>
+          Action
+        </StyledTableCell>
       </TableRow>
     </TableHead>
   );
 };
 
-const MenuPage = () => {
+const MenuManagement = () => {
+  const history = useHistory();
+  const location = useLocation();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [menu, setMenu] = React.useState([] as any[]);
+  const [menu, setMenu] = React.useState<Menu[]>([]);
   const [txtSearch, setTxtSearch] = React.useState('');
   const [filterMenu, setFilterMenu] = React.useState([] as any[]);
+  const [loading, setLoading] = React.useState(false);
 
   const searchBarStyle: React.CSSProperties = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: '20px 0px',
+  };
+
+  //Deleting database entry is a no no, because Order item depends on menuId.
+  //To solve this, lets update the menu item and set deleted key to true.
+  const deleteMenu = async (menu: Menu) => {
+    const res = window.confirm(`Are you sure want to delete ${menu.name}?`);
+    if (res === true) {
+      const db = firebase.firestore();
+      setLoading(true);
+      await db
+        .collection('menu')
+        .doc(menu.id)
+        .update({
+          deleted: true,
+        });
+      window.location.reload();
+    }
   };
 
   const handleSearchMenu = (ev: any) => {
@@ -64,6 +92,7 @@ const MenuPage = () => {
   ) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -73,19 +102,28 @@ const MenuPage = () => {
 
   const getMenuList = async () => {
     const db = firebase.firestore();
-    const result: any[] = [] as any[];
+    const result: Menu[] = [];
+    setLoading(true);
     await db
       .collection('menu')
       .where('deleted', '==', false)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          result.push(doc.data());
+          const newMenu: Menu = {
+            id: doc.id,
+            name: doc.data().name,
+            type: doc.data().type || 'drink',
+            price: doc.data().price,
+          };
+
+          result.push(newMenu);
           // console.log(doc.data());
         });
       });
     setMenu(result);
     setFilterMenu(result);
+    setLoading(false);
   };
 
   const renderMenuType = (val: string) => {
@@ -94,15 +132,28 @@ const MenuPage = () => {
     else if (val === 'dessert') return 'Dessert';
   };
 
-  const renderTableBody = (items: any[]) => {
+  const updateMenu = (item: Menu) => {
+    history.push(`/admin/menu/update/${item.id}`);
+  };
+
+  const renderTableBody = (items: Menu[]) => {
     const result = items
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((item: any, k) => {
+      .map((item: Menu, k) => {
         return (
           <TableRow key={k}>
             <TableCell>{item.name}</TableCell>
             <TableCell>{renderMenuType(item.type)}</TableCell>
             <TableCell>{item.price}</TableCell>
+            <TableCell style={{ textAlign: 'center' }}>
+              <Button color='primary' onClick={() => updateMenu(item)}>
+                Update
+              </Button>{' '}
+              |
+              <Button color='secondary' onClick={() => deleteMenu(item)}>
+                Delete
+              </Button>
+            </TableCell>
           </TableRow>
         );
       });
@@ -118,7 +169,7 @@ const MenuPage = () => {
     <Container width='1000px'>
       <div style={searchBarStyle}>
         <Typography variant='h4' component='h4'>
-          Food Menu
+          Menu Management
         </Typography>
         <form>
           <TextField
@@ -127,6 +178,17 @@ const MenuPage = () => {
             value={txtSearch}
             onChange={(ev) => handleSearchMenu(ev)}
           ></TextField>
+          <Button
+            variant='contained'
+            startIcon={<Add />}
+            color='primary'
+            style={{ height: 55, marginLeft: 20 }}
+            onClick={() => {
+              history.push(`${location.pathname}/create`);
+            }}
+          >
+            Add New Menu
+          </Button>
         </form>
       </div>
       <Paper>
@@ -145,8 +207,9 @@ const MenuPage = () => {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <FullScreenSpinner open={loading} />
     </Container>
   );
 };
 
-export default MenuPage;
+export default MenuManagement;
