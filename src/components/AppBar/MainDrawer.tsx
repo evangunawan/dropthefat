@@ -123,7 +123,7 @@ const MainDrawer = (props: DrawerProps) => {
           />
           <DrawerItem
             text='Reservation'
-            link='/reservation'
+            link='/reservations'
             icon={<EventSeat />}
             onLink={props.onClose}
           />
