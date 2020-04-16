@@ -11,6 +11,9 @@ import TableManagement from '../pages/Admin/Tables/TableManagement';
 import MenuManagement from '../pages/Admin/Menu/MenuManagement';
 import CreateMenu from '../pages/Admin/Menu/CreateMenu';
 import UpdateMenu from '../pages/Admin/Menu/UpdateMenu';
+import VendorManagement from '../pages/Admin/Vendor/VendorManagement';
+import UpdateVendor from '../pages/Admin/Vendor/UpdateVendor';
+import CreateVendor from '../pages/Admin/Vendor/CreateVendor';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -36,6 +39,9 @@ export default class MainRoutes extends React.Component {
                 <Route exact path={`${match.url}/menu`} component={MenuManagement} />
                 <Route path={`${match.url}/menu/update/:id`} component={UpdateMenu} />
                 <Route path={`${match.url}/menu/create`} component={CreateMenu} />
+                <Route exact path={`${match.url}/vendor`} component={VendorManagement} />
+                <Route path={`${match.url}/vendor/update/:id`} component={UpdateVendor} />
+                <Route path={`${match.url}/vendor/create`} component={CreateVendor} />
               </div>
             )}
           />
