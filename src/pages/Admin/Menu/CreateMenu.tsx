@@ -106,6 +106,7 @@ const CreateMenu = () => {
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
+            disabled={menuName.length < 1 || menuType.length < 1 || menuPrice.length < 1}
             onClick={addMenuToFirebase}
           >
             ADD

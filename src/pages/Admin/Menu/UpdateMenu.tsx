@@ -150,6 +150,7 @@ const UpdateMenu = () => {
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
+            disabled={menuName.length < 1 || menuType.length < 1 || menuPrice < 1}
             onClick={() => updateMenu(id || 'null')}
           >
             UPDATE
