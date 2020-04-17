@@ -22,7 +22,7 @@
     "dateformat": "^3.0.3",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
-    "firebase": "^7.9.3",
+    "firebase": "^7.14.1",
     "md5": "^2.2.1",
     "node-sass": "^4.13.1",
     "path": "^0.12.7",

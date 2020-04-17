@@ -1,19 +1,11 @@
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
-import { renderTime } from '../../../util/RenderUtil';
+// import { renderTime } from '../../../util/RenderUtil';
 import Container from '../../../components/Container';
 import DateFnsUtils from '@date-io/date-fns';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import {
-  Typography,
-  TextField,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Button,
-} from '@material-ui/core';
+import { Typography, TextField, Button } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Promo } from '../../../models/Promo';
 import FullScreenSpinner from '../../../components/FullScreenSpinner';
@@ -165,6 +157,7 @@ const UpdatePromo = () => {
           </Button>
         </fieldset>
       </div>
+      <FullScreenSpinner open={loading} />
     </Container>
   );
 };

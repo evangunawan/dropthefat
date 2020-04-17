@@ -2,17 +2,9 @@ import 'date-fns';
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
-import { startOfDay } from 'date-fns';
+// import { startOfDay } from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
-import {
-  Typography,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Button,
-} from '@material-ui/core';
+import { Typography, TextField, Button } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 import Container from '../../../components/Container';
