@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from 'firebase';
+import '@firebase/firestore';
 import {
   TableContainer,
   Table,
@@ -18,9 +18,9 @@ import {
 import Container from '../../../components/Container';
 import { Add } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Menu } from '../../../models/Menu';
+import { Promo } from '../../../models/Promo';
 import FullScreenSpinner from '../../../components/FullScreenSpinner';
-import { renderCurrency } from '../../../util/RenderUtil';
+import { renderTime, renderDiscount } from '../../../util/RenderUtil';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -34,9 +34,12 @@ const TableHeader = () => {
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell>Food Name</StyledTableCell>
-        <StyledTableCell>Food Type</StyledTableCell>
-        <StyledTableCell>Price</StyledTableCell>
+        <StyledTableCell>Promo Code</StyledTableCell>
+        <StyledTableCell>Promo Title</StyledTableCell>
+        <StyledTableCell>Start Date</StyledTableCell>
+        <StyledTableCell>Expired Date</StyledTableCell>
+        <StyledTableCell>Discount</StyledTableCell>
+
         <StyledTableCell style={{ width: 200, textAlign: 'center' }}>
           Action
         </StyledTableCell>
@@ -45,47 +48,15 @@ const TableHeader = () => {
   );
 };
 
-const MenuManagement = () => {
+const PromoManagement = () => {
   const history = useHistory();
   const location = useLocation();
+  const [txtSearch, setTxtSearch] = React.useState('');
+  const [promo, setPromo] = React.useState<Promo[]>([]);
+  const [filterPromo, setFilterPromo] = React.useState([] as any[]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [menu, setMenu] = React.useState<Menu[]>([]);
-  const [txtSearch, setTxtSearch] = React.useState('');
-  const [filterMenu, setFilterMenu] = React.useState([] as any[]);
   const [loading, setLoading] = React.useState(false);
-
-  const searchBarStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: '20px 0px',
-  };
-
-  //Deleting database entry is a no no, because Order item depends on menuId.
-  //To solve this, lets update the menu item and set deleted key to true.
-  const deleteMenu = async (menu: Menu) => {
-    const res = window.confirm(`Are you sure want to delete ${menu.name}?`);
-    if (res === true) {
-      const db = firebase.firestore();
-      setLoading(true);
-      await db
-        .collection('menu')
-        .doc(menu.id)
-        .update({
-          deleted: true,
-        });
-      window.location.reload();
-    }
-  };
-
-  const handleSearchMenu = (ev: any) => {
-    setTxtSearch(ev.target.value);
-    const temp = menu.filter((item: any) =>
-      item.name.toLowerCase().includes(ev.target.value.toLowerCase())
-    );
-    setFilterMenu(temp);
-  };
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -101,57 +72,87 @@ const MenuManagement = () => {
     setPage(0);
   };
 
-  const getMenuList = async () => {
+  const searchBarStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: '20px 0px',
+  };
+
+  //Deleting database entry is a no no, because Order item depends on menuId.
+  //To solve this, lets update the menu item and set deleted key to true.
+  const deletePromo = async (promo: Promo) => {
+    const res = window.confirm(`Are you sure want to delete ${promo.title}?`);
+    if (res === true) {
+      const db = firebase.firestore();
+      setLoading(true);
+      await db
+        .collection('promo')
+        .doc(promo.id)
+        .update({
+          deleted: true,
+        });
+      window.location.reload();
+    }
+  };
+  const handleSearchPromo = (ev: any) => {
+    setTxtSearch(ev.target.value);
+    const temp = promo.filter((item: any) =>
+      item.codeId.toLowerCase().includes(ev.target.value.toLowerCase())
+    );
+    setFilterPromo(temp);
+  };
+
+  const getPromoList = async () => {
     const db = firebase.firestore();
-    const result: Menu[] = [];
+    const result: Promo[] = [];
     setLoading(true);
     await db
-      .collection('menu')
+      .collection('promo')
       .where('deleted', '==', false)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          const newMenu: Menu = {
+          const newPromo: Promo = {
             id: doc.id,
-            name: doc.data().name,
-            type: doc.data().type || 'drink',
-            price: doc.data().price,
+            codeId: doc.data().codeId,
+            title: doc.data().title,
+            startDate: doc.data().startDate,
+            expiredDate: doc.data().expiredDate,
+            discount: doc.data().discount,
           };
-
-          result.push(newMenu);
-          // console.log(doc.data());
+          result.push(newPromo);
         });
       });
-    setMenu(result);
-    setFilterMenu(result);
+    setPromo(result);
+    setFilterPromo(result);
     setLoading(false);
   };
+  React.useEffect(() => {
+    getPromoList();
+  }, []);
 
-  const renderMenuType = (val: string) => {
-    if (val === 'drink') return 'Drink';
-    else if (val === 'main-course') return 'Main Course';
-    else if (val === 'dessert') return 'Dessert';
+  const updatePromo = (item: Promo) => {
+    history.push(`/admin/promo/update/${item.id}`);
   };
 
-  const updateMenu = (item: Menu) => {
-    history.push(`/admin/menu/update/${item.id}`);
-  };
-
-  const renderTableBody = (items: Menu[]) => {
+  const renderTableBody = (items: Promo[]) => {
     const result = items
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((item: Menu, k) => {
+      .map((item: Promo, k) => {
         return (
           <TableRow key={k}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>{renderMenuType(item.type)}</TableCell>
-            <TableCell>{renderCurrency(item.price)}</TableCell>
+            <TableCell>{item.codeId}</TableCell>
+            <TableCell>{item.title}</TableCell>
+            <TableCell>{renderTime(item.startDate)}</TableCell>
+            <TableCell>{renderTime(item.expiredDate)}</TableCell>
+            <TableCell>{renderDiscount(0.5)}</TableCell>
             <TableCell style={{ textAlign: 'center' }}>
-              <Button color='primary' onClick={() => updateMenu(item)}>
+              <Button color='primary' onClick={() => updatePromo(item)}>
                 Update
               </Button>{' '}
               |
-              <Button color='secondary' onClick={() => deleteMenu(item)}>
+              <Button color='secondary' onClick={() => deletePromo(item)}>
                 Delete
               </Button>
             </TableCell>
@@ -161,23 +162,18 @@ const MenuManagement = () => {
 
     return result;
   };
-
-  React.useEffect(() => {
-    getMenuList();
-  }, []);
-
   return (
     <Container width='1000px'>
       <div style={searchBarStyle}>
         <Typography variant='h4' component='h4'>
-          Menu Management
+          Promo Management
         </Typography>
         <form>
           <TextField
             label='Search Menu'
             variant='outlined'
             value={txtSearch}
-            onChange={(ev) => handleSearchMenu(ev)}
+            onChange={(ev) => handleSearchPromo(ev)}
           ></TextField>
           <Button
             variant='contained'
@@ -196,12 +192,12 @@ const MenuManagement = () => {
         <TableContainer>
           <Table>
             <TableHeader />
-            <TableBody>{renderTableBody(filterMenu)}</TableBody>
+            <TableBody>{renderTableBody(filterPromo)}</TableBody>
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10]}
-          count={filterMenu.length}
+          count={filterPromo.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -213,4 +209,4 @@ const MenuManagement = () => {
   );
 };
 
-export default MenuManagement;
+export default PromoManagement;

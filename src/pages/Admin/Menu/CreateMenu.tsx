@@ -1,6 +1,6 @@
 import * as React from 'react';
-import firebase from 'firebase';
-import '@firebase/firestore';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import {
   Typography,
   TextField,
@@ -73,7 +73,7 @@ const CreateMenu = () => {
             style={{ marginBottom: 20, width: 500 }}
             value={menuName}
             onChange={(ev) => setMenuName(ev.target.value)}
-          ></TextField>
+          />
 
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Food Type</InputLabel>
@@ -106,6 +106,7 @@ const CreateMenu = () => {
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
+            disabled={menuName.length < 1 || menuType.length < 1 || menuPrice.length < 1}
             onClick={addMenuToFirebase}
           >
             ADD

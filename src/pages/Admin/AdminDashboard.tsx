@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
-import { Button } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Container from '../../components/Container';
 import Cookies from 'universal-cookie';
 import { useHistory } from 'react-router-dom';
@@ -31,26 +30,7 @@ const AdminDashboard = () => {
       history.push('/admin/login');
     }
   };
-  // const [adminToken, setAdminToken] = React.useState();1
-  const containerStyle: CSSProperties = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '90vh',
-  };
-  const menuBox: CSSProperties = {
-    width: '150px',
-    height: '150px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '20px',
-    margin: '0px 30px',
-    backgroundColor: 'gray',
-    color: 'white',
-  };
+  // const [adminToken, setAdminToken] = React.useState();
 
   React.useEffect(() => {
     fetchToken();
@@ -61,19 +41,10 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Container width='80%' style={containerStyle}>
-      <Button variant='contained' style={menuBox}>
-        <span style={{ textAlign: 'center' }}>Menu Management</span>
-      </Button>
-      <Button variant='contained' style={menuBox}>
-        <span style={{ textAlign: 'center' }}>Employee Management</span>
-      </Button>
-      <Button variant='contained' style={menuBox}>
-        <span style={{ textAlign: 'center' }}>Expenditure Management</span>
-      </Button>
-      <Button variant='contained' style={menuBox}>
-        <span style={{ textAlign: 'center' }}>Buy Ingredients</span>
-      </Button>
+    <Container width='1000px'>
+      <Typography variant='h4' style={{ paddingTop: 300, textAlign: 'center' }}>
+        Welcome to Admin Page.
+      </Typography>
     </Container>
   );
 };

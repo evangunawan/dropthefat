@@ -80,8 +80,8 @@ const MainDrawer = (props: DrawerProps) => {
         </List>
         <List subheader={<ListSubheader>Purchasing</ListSubheader>}>
           <DrawerItem
-            text='Vendors'
-            link='/admin/vendors'
+            text='Vendor'
+            link='/admin/vendor'
             icon={<Business />}
             onLink={props.onClose}
           />
