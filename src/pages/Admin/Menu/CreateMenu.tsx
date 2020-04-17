@@ -45,6 +45,7 @@ const CreateMenu = () => {
       name: menuName,
       type: menuType,
       price: intPrice,
+      deleted: false,
     });
     setLoading(false);
     history.push('/admin/menu');

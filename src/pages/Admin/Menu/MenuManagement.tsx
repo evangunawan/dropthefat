@@ -61,6 +61,8 @@ const MenuManagement = () => {
     margin: '20px 0px',
   };
 
+  //Deleting database entry is a no no, because Order item depends on menuId.
+  //To solve this, lets update the menu item and set deleted key to true.
   const deleteMenu = async (menu: Menu) => {
     const res = window.confirm(`Are you sure want to delete ${menu.name}?`);
     if (res === true) {
@@ -69,7 +71,9 @@ const MenuManagement = () => {
       await db
         .collection('menu')
         .doc(menu.id)
-        .delete();
+        .update({
+          deleted: true,
+        });
       window.location.reload();
     }
   };
@@ -102,6 +106,7 @@ const MenuManagement = () => {
     setLoading(true);
     await db
       .collection('menu')
+      .where('deleted', '==', false)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {

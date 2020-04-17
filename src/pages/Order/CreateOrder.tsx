@@ -220,6 +220,7 @@ const CreateOrder = () => {
     const result: Menu[] = [];
     await db
       .collection('menu')
+      .where('deleted', '==', false)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
