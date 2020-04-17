@@ -15,6 +15,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import Container from '../components/Container';
+import { renderCurrency } from '../util/RenderUtil';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -101,7 +102,7 @@ const MenuPage = () => {
           <TableRow key={k}>
             <TableCell>{item.name}</TableCell>
             <TableCell>{renderMenuType(item.type)}</TableCell>
-            <TableCell>{item.price}</TableCell>
+            <TableCell>{renderCurrency(item.price)}</TableCell>
           </TableRow>
         );
       });
