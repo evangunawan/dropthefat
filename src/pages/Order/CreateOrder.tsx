@@ -165,7 +165,7 @@ const CreateOrder = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [reservation, setReservation] = React.useState<Reservation>({} as Reservation);
+  // const [reservation, setReservation] = React.useState<Reservation>({} as Reservation);
   const db = firebase.firestore();
   const history = useHistory();
   const { rsv } = useParams();
@@ -241,7 +241,7 @@ const CreateOrder = () => {
           history.push('/order/create');
         }
       });
-    setReservation(result);
+    // setReservation(result);
     setPic(result.pic);
     setGuests(result.guests);
     const temp: DiningTable = await getTableByNumber(result.tableNumber || 0);
@@ -389,13 +389,18 @@ const CreateOrder = () => {
     const selectedSize = getTableType(guestCount);
 
     tableList.some((item: DiningTable) => {
-      if (item.status !== 'unavailable' && item.status !== 'dining') {
+      if (
+        item.status !== 'unavailable' &&
+        item.status !== 'dining' &&
+        item.status !== 'reserved'
+      ) {
         if (item.type === selectedSize) {
           setSelectedTable(item);
           setTableMessage('');
           return true;
         }
       }
+
       setTableMessage(`No available table at the moment with size ${selectedSize}`);
       setSelectedTable({
         status: 'unavailable',

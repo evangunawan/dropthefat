@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import {
   Modal,
   Fade,
@@ -9,6 +11,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { DiningTable } from '../../models/DiningTable';
+import { Reservation } from '../../models/Reservation';
 
 interface ModalProps {
   open: boolean;
@@ -21,15 +24,18 @@ interface ModalProps {
 
 interface BoxProps {
   item: DiningTable;
+  rsvTime: number;
   onClick(): void;
 }
 
 const TableButton = (props: BoxProps) => {
   const getColor = () => {
-    if (props.item.status === 'available') return '#4caf50';
-    else if (props.item.status === 'dining') return '#1976d2';
-    else if (props.item.status === 'reserved') return '#ff9800';
-    else return '#616161';
+    if (props.item.status === 'unavailable') return '#616161';
+    else if (props.item.status === 'dining') return '$1976d2';
+    else if (props.item.status === 'reserved') {
+      if (props.rsvTime > 7200000) return '#4caf50';
+      else return '#ff9800';
+    } else return '#4caf50';
   };
 
   const isTableDisabled = () => {
@@ -59,6 +65,7 @@ const TableButton = (props: BoxProps) => {
 };
 
 const ChangeTableModal = (props: ModalProps) => {
+  const [reservations, setReservations] = React.useState<Reservation[]>([]);
   const modalStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -82,6 +89,9 @@ const ChangeTableModal = (props: ModalProps) => {
       return item.type === getTableType(guests);
     });
     const result = filtered.map((item: DiningTable) => {
+      const rsvTime =
+        reservations.find((rsv) => rsv.tableNumber === item.tableNumber)
+          ?.reservationTime || 0;
       return (
         <TableButton
           item={item}
@@ -89,12 +99,40 @@ const ChangeTableModal = (props: ModalProps) => {
             props.onTableSelect(item);
             props.onClose();
           }}
+          rsvTime={rsvTime}
           key={item.id}
         />
       );
     });
     return result;
   };
+
+  const fetchReservations = async () => {
+    console.log('fetching reservations...');
+    const db = firebase.firestore();
+    db.collection('reservation')
+      .get()
+      .then((qs) => {
+        qs.forEach((doc) => {
+          const newRsv: Reservation = {
+            id: doc.id,
+            guests: doc.data().guests,
+            createdTime: doc.data().createdTime,
+            reservationTime: doc.data().reservationTime,
+            pic: doc.data().pic,
+            tableNumber: doc.data().tableNumber,
+          };
+          const temp = [...reservations];
+          temp.push(newRsv);
+          setReservations(temp);
+        });
+      });
+  };
+
+  React.useEffect(() => {
+    fetchReservations();
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Modal open={props.open} onClose={props.onClose} style={modalStyle}>
@@ -118,8 +156,8 @@ const ChangeTableModal = (props: ModalProps) => {
             <div>
               <Typography variant='body2' color='textSecondary'>
                 <i>
-                  *Green: Available, Blue: Dining/Active, Orange: Reserved, Grey:
-                  Unavailable
+                  *Green: Available, Blue: Dining/Active, Orange: Reserved under 2 hours,
+                  Grey: Unavailable
                 </i>
               </Typography>
             </div>

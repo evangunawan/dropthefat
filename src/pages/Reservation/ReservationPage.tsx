@@ -17,11 +17,12 @@ import {
   IconButton,
   Box,
 } from '@material-ui/core';
-import { AddCircleOutline } from '@material-ui/icons';
+import { AddCircleOutline, Cancel } from '@material-ui/icons';
 import { Add } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { Reservation } from '../../models/Reservation';
 import { renderTime } from '../../util/RenderUtil';
+import FullScreenSpinner from '../../components/FullScreenSpinner';
 
 const TableHeader = () => {
   return (
@@ -50,6 +51,7 @@ const TableHeader = () => {
 const ReservationPage = () => {
   const history = useHistory();
   const [reservations, setReservations] = React.useState<Reservation[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
   const fetchReservations = async () => {
     const db = firebase.firestore();
@@ -88,24 +90,55 @@ const ReservationPage = () => {
     history.push(`/order/create/${item.id}`);
   };
 
+  const handleCancelRsv = async (item: Reservation) => {
+    const db = firebase.firestore();
+    const res = window.confirm(`Are you sure want to cancel this reservation?`);
+    if (res === true) {
+      setLoading(true);
+      //Delete the document
+      await db
+        .collection('reservation')
+        .doc(item.id)
+        .delete();
+      await db
+        .collection('table')
+        .where('tableNumber', '==', item.tableNumber)
+        .get()
+        .then((qS) => {
+          qS.forEach((doc) => {
+            doc.ref.update({
+              status: 'available',
+            });
+          });
+        });
+      fetchReservations();
+      setLoading(false);
+    }
+  };
+
   const renderTableBody = () => {
     if (reservations.length > 0) {
       const result = reservations.map((item: Reservation) => {
         return (
           <TableRow key={item.id}>
-            <TableCell style={{ minWidth: 200 }}>{item.pic}</TableCell>
+            <TableCell style={{ minWidth: 150 }}>{item.pic}</TableCell>
             <TableCell>{item.tableNumber}</TableCell>
             <TableCell>{renderTime(item.createdTime)} </TableCell>
             <TableCell>{renderRsvTime(item.reservationTime)}</TableCell>
-            <TableCell>
+            <TableCell style={{ minWidth: 150 }}>
               <Tooltip title='Create Order' arrow>
                 <IconButton
-                  style={{ width: 50 }}
                   onClick={() => {
                     handleCreateOrder(item);
                   }}
+                  size='small'
                 >
                   <AddCircleOutline />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title='Cancel' arrow>
+                <IconButton size='small' onClick={() => handleCancelRsv(item)}>
+                  <Cancel />
                 </IconButton>
               </Tooltip>
             </TableCell>
@@ -162,6 +195,7 @@ const ReservationPage = () => {
           </Paper>
         </Grid>
       </Grid>
+      <FullScreenSpinner open={loading} />
     </Container>
   );
 };

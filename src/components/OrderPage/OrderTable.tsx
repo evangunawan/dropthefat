@@ -13,6 +13,7 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
+  Box,
 } from '@material-ui/core';
 import { List, Payment, History } from '@material-ui/icons';
 import OrderMenuModal from './OrderMenuModal';
@@ -136,7 +137,13 @@ const OrderTable = (props: TableProps) => {
             <TableCell>{item.pic}</TableCell>
             <TableCell>{item.menuOrders.length}</TableCell>
             <TableCell>{renderCurrency(item.total)}</TableCell>
-            <TableCell>{item.status}</TableCell>
+            <TableCell>
+              {item.status === 'active' ? (
+                <Box color='success.main'>Active</Box>
+              ) : (
+                <Box color='text.secondary'>Completed</Box>
+              )}
+            </TableCell>
             <TableCell>
               <Tooltip title='View Details' arrow>
                 <IconButton
