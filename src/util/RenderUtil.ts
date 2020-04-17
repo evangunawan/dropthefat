@@ -17,3 +17,7 @@ export function renderTime(ms: number) {
     return 'NaN';
   }
 }
+
+export function renderDiscount(ms: number) {
+  return ms * 100 + ' %';
+}
