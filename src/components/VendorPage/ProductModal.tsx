@@ -11,8 +11,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  TableFooter,
   TablePagination,
+  Paper,
 } from '@material-ui/core';
 import { Vendor } from '../../models/Vendor';
 import { Product } from '../../models/Product';
@@ -98,39 +98,34 @@ const ProductModal = (props: ModalProps) => {
           <CardContent>
             <Typography variant='h6'>Vendor Products</Typography>
             <br />
-            <TableContainer>
-              <Table size='small'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
-                      Name
-                    </TableCell>
-                    <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
-                      Stock Unit
-                    </TableCell>
-                    <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
-                      Price/unit
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{renderTableItem(vendor.products)}</TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={4}>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component='div'
-                        count={vendor.products.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                      />
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
+            <Paper>
+              <TableContainer>
+                <Table size='small'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
+                        Name
+                      </TableCell>
+                      <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
+                        Stock Unit
+                      </TableCell>
+                      <TableCell style={{ fontWeight: 'bold', fontSize: '15px' }}>
+                        Price/unit
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>{renderTableItem(vendor.products)}</TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10]}
+                count={vendor.products.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </Paper>
           </CardContent>
         </Card>
       </Fade>

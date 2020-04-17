@@ -1,7 +1,6 @@
 import * as React from 'react';
 import firebase from 'firebase';
 import '@firebase/firestore';
-
 import Container from '../../../components/Container';
 import {
   Typography,
@@ -45,7 +44,7 @@ const UpdateMenu = () => {
     setMenuPrice(price);
   };
 
-  const fetchMenu = async (menuId: string) => {
+  const fetchMenu = async (menuId: String) => {
     const db = firebase.firestore();
     let result: Menu = {} as Menu;
     if (menuId === 'null' || menuId.length < 2) {
@@ -59,7 +58,7 @@ const UpdateMenu = () => {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          console.log(doc.data());
+          // console.log(doc.data());
           const newMenu: Menu = {
             id: doc.id,
             name: doc.data()?.name,

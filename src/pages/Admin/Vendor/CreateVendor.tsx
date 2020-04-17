@@ -73,9 +73,8 @@ const CreateVendor = () => {
     padding: '16px',
   };
 
-  const addVendor = () => {
+  const addProduct = () => {
     setModalOpen(true);
-    // console.log(menuList);
   };
 
   const renderUnitType = (val: String) => {
@@ -93,7 +92,7 @@ const CreateVendor = () => {
     }
   };
 
-  const renderMenuItems = (items: Product[]) => {
+  const renderVendorProducts = (items: Product[]) => {
     return items.map((item, k) => {
       return (
         <TableRow key={k}>
@@ -130,7 +129,7 @@ const CreateVendor = () => {
         </TableRow>
       );
     } else {
-      return renderMenuItems(items);
+      return renderVendorProducts(items);
     }
   };
 
@@ -227,9 +226,9 @@ const CreateVendor = () => {
           startIcon={<Add />}
           disableRipple
           style={buttonStyle}
-          onClick={addVendor}
+          onClick={addProduct}
         >
-          <b>ADD MENU</b>
+          <b>ADD PRODUCT</b>
         </Button>
       </div>
 
