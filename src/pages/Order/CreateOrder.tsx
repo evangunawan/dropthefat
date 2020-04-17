@@ -23,10 +23,11 @@ import 'firebase/firestore';
 import { MenuOrder } from '../../models/MenuOrder';
 import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
 import { DiningTable } from '../../models/DiningTable';
 import ChangeTableModal from '../../components/OrderPage/ChangeTableModal';
+import { Reservation } from '../../models/Reservation';
 
 interface TableProps {
   orders: MenuOrder[];
@@ -164,8 +165,10 @@ const CreateOrder = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [reservation, setReservation] = React.useState<Reservation>({} as Reservation);
   const db = firebase.firestore();
   const history = useHistory();
+  const { rsv } = useParams();
 
   const formStyle: React.CSSProperties = {
     width: '100%',
@@ -195,6 +198,29 @@ const CreateOrder = () => {
     margin: '16px auto',
     alignSelf: 'center',
   };
+
+  async function fetchReservations(rsvId: string) {
+    db.collection('reservation')
+      .doc(rsvId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const newRsv: Reservation = {
+            id: doc.id,
+            createdTime: doc.data()?.createdTime,
+            pic: doc.data()?.pic,
+            reservationTime: doc.data()?.reservationTime,
+            guests: doc.data()?.guests,
+          };
+          setReservation(newRsv);
+          setPic(doc.data()?.pic);
+          setGuests(doc.data()?.guests);
+        } else {
+          alert('Reservation ID not found!');
+          history.push('/order/create');
+        }
+      });
+  }
 
   async function fetchTables() {
     const result: DiningTable[] = [];
@@ -347,6 +373,9 @@ const CreateOrder = () => {
   React.useEffect(() => {
     fetchMenu();
     fetchTables();
+    if (rsv) {
+      fetchReservations(rsv);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -357,7 +386,9 @@ const CreateOrder = () => {
   return (
     <Container width='1000px' style={containerStyle}>
       <div style={{ flexGrow: 1 }}>
-        <Typography variant='h5'>Create an Order</Typography>
+        <Typography variant='h5'>
+          Create an Order {rsv ? '(With Reservation)' : null}
+        </Typography>
         <Typography variant='body2' color='textSecondary' component='p'>
           Create an order entry by selecting menu and data below.
         </Typography>
@@ -384,6 +415,7 @@ const CreateOrder = () => {
               <TextField
                 required
                 fullWidth
+                disabled={rsv ? true : false}
                 label='Guest count'
                 type='number'
                 variant='outlined'
@@ -409,6 +441,7 @@ const CreateOrder = () => {
                 </div>
                 <Button
                   disableRipple
+                  disabled={rsv ? true : false}
                   variant='contained'
                   color='primary'
                   onClick={() => setTableModalOpen(true)}

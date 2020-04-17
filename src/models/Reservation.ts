@@ -3,4 +3,6 @@ export interface Reservation {
   pic: string;
   createdTime: number;
   reservationTime: number;
+  guests: number;
+  tableNumber?: number;
 }

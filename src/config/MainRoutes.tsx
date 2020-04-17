@@ -25,6 +25,7 @@ export default class MainRoutes extends React.Component {
           <Route exact path='/' component={Home} />
           <Route exact path='/order' component={OrderPage} />
           <Route exact path='/order/create' component={CreateOrder} />
+          <Route path='/order/create/:rsv' component={CreateOrder} />
           <Route exact path='/reservations' component={ReservationPage} />
           <Route exact path='/reservations/create' component={CreateReservation} />
           <Route exact path='/menu' component={MenuPage} />
