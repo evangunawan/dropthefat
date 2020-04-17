@@ -14,6 +14,9 @@ import UpdateMenu from '../pages/Admin/Menu/UpdateMenu';
 import ManageExpenditure from '../pages/Expenditure/ManageExpenditure';
 import AddIngredient from '../pages/Expenditure/AddIngredient';
 import DeleteIngredient from '../pages/Expenditure/DeleteIngredient';
+import VendorManagement from '../pages/Admin/Vendor/VendorManagement';
+import UpdateVendor from '../pages/Admin/Vendor/UpdateVendor';
+import CreateVendor from '../pages/Admin/Vendor/CreateVendor';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -45,6 +48,9 @@ export default class MainRoutes extends React.Component {
                   path={`${match.url}/expenditure/delete`}
                   component={DeleteIngredient}
                 />
+                <Route exact path={`${match.url}/vendor`} component={VendorManagement} />
+                <Route path={`${match.url}/vendor/update/:id`} component={UpdateVendor} />
+                <Route path={`${match.url}/vendor/create`} component={CreateVendor} />
               </div>
             )}
           />

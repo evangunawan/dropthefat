@@ -73,7 +73,7 @@ const CreateMenu = () => {
             style={{ marginBottom: 20, width: 500 }}
             value={menuName}
             onChange={(ev) => setMenuName(ev.target.value)}
-          ></TextField>
+          />
 
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Food Type</InputLabel>
