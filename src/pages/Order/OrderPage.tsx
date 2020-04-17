@@ -70,6 +70,8 @@ const OrderPage = () => {
             total: data.total,
             guests: data.guests,
             status: data.status || 'undefined',
+            tableNumber: data.tableNumber,
+            paymentTime: data.paymentTime || 0,
           };
 
           result.push(newOrder);
@@ -116,7 +118,13 @@ const OrderPage = () => {
           NEW ORDER
         </Button>
       </div>
-      <OrderTable items={order} />
+      <OrderTable
+        items={order}
+        onRefreshItems={() => {
+          console.log('refresh items');
+          fetchOrder();
+        }}
+      />
     </Container>
   );
 };

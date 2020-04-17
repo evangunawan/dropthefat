@@ -1,6 +1,6 @@
 import * as React from 'react';
-import firebase from 'firebase';
-import '@firebase/firestore';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 
 import { Button } from '@material-ui/core';
 import Container from '../../components/Container';

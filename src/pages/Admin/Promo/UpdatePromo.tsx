@@ -22,6 +22,7 @@ const fieldBody: React.CSSProperties = {
 
 const UpdatePromo = () => {
   const history = useHistory();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [promoId, setPromoId] = React.useState('');
   const [promoCodeId, setPromoCodeId] = React.useState('');
   const [promoTitle, setPromoTitle] = React.useState('');
@@ -30,7 +31,7 @@ const UpdatePromo = () => {
 
   const [selectedStartedDate, setSelectedStartedDate] = React.useState<Date | null>();
   const [selectedExpiredDate, setSelectedExpiredDate] = React.useState<Date | null>();
-  let { id } = useParams();
+  const { id } = useParams();
 
   const fetchPromo = async (promoId: string) => {
     const db = firebase.firestore();
@@ -58,7 +59,7 @@ const UpdatePromo = () => {
     setSelectedStartedDate(new Date(result.startDate));
     setSelectedExpiredDate(new Date(result.expiredDate));
   };
-  const updatePromo = async (promoId: String) => {
+  const updatePromo = async (promoId: string) => {
     const db = firebase.firestore();
     setLoading(true);
     await db

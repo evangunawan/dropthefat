@@ -1,6 +1,7 @@
 import * as React from 'react';
-import firebase from 'firebase';
-import '@firebase/firestore';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+
 import Container from '../../../components/Container';
 import {
   Typography,
