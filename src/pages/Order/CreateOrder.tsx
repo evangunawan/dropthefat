@@ -199,27 +199,58 @@ const CreateOrder = () => {
     alignSelf: 'center',
   };
 
+  async function getTableByNumber(num: number) {
+    let result = {} as DiningTable;
+    await db
+      .collection('table')
+      .where('tableNumber', '==', num)
+      .get()
+      .then((qs) => {
+        qs.forEach((doc) => {
+          if (doc.exists) {
+            result = {
+              id: doc.id,
+              status: doc.data().status,
+              tableNumber: doc.data().tableNumber,
+              type: doc.data().type,
+            };
+          }
+        });
+      });
+    return result;
+  }
+
   async function fetchReservations(rsvId: string) {
-    db.collection('reservation')
+    let result = {} as Reservation;
+    await db
+      .collection('reservation')
       .doc(rsvId)
       .get()
       .then((doc) => {
         if (doc.exists) {
-          const newRsv: Reservation = {
+          result = {
             id: doc.id,
             createdTime: doc.data()?.createdTime,
             pic: doc.data()?.pic,
             reservationTime: doc.data()?.reservationTime,
             guests: doc.data()?.guests,
+            tableNumber: doc.data()?.tableNumber,
           };
-          setReservation(newRsv);
-          setPic(doc.data()?.pic);
-          setGuests(doc.data()?.guests);
         } else {
           alert('Reservation ID not found!');
           history.push('/order/create');
         }
       });
+    setReservation(result);
+    setPic(result.pic);
+    setGuests(result.guests);
+    const temp: DiningTable = await getTableByNumber(result.tableNumber || 0);
+    if (temp.status === 'dining') {
+      alert('Whoops, table is in use! Create a new order instead.');
+      history.push('/order/create');
+    } else {
+      setSelectedTable(temp);
+    }
   }
 
   async function fetchTables() {
@@ -291,6 +322,13 @@ const CreateOrder = () => {
     }
   };
 
+  const removeReservation = async () => {
+    await db
+      .collection('reservation')
+      .doc(rsv)
+      .delete();
+  };
+
   const createOrder = async () => {
     setLoading(true);
     const mOrders: { menu: string; quantity: number }[] = [];
@@ -320,6 +358,11 @@ const CreateOrder = () => {
         .update({
           status: 'dining',
         });
+
+      //Delete resrvation document if avail.
+      if (rsv) {
+        await removeReservation();
+      }
 
       setLoading(false);
       history.push('/order');

@@ -15,6 +15,7 @@ import {
   Table,
   Tooltip,
   IconButton,
+  Box,
 } from '@material-ui/core';
 import { AddCircleOutline } from '@material-ui/icons';
 import { Add } from '@material-ui/icons';
@@ -72,6 +73,17 @@ const ReservationPage = () => {
     setReservations(result);
   };
 
+  const renderRsvTime = (time: number) => {
+    const now = Date.now();
+    if (time - now < 0) {
+      return <Box color='error.main'>{renderTime(time)}</Box>;
+    } else if (time - now < 7200000) {
+      return <Box color='warning.main'>{renderTime(time)}</Box>;
+    } else {
+      return <Box color='text.primary'>{renderTime(time)}</Box>;
+    }
+  };
+
   const handleCreateOrder = (item: Reservation) => {
     history.push(`/order/create/${item.id}`);
   };
@@ -84,7 +96,7 @@ const ReservationPage = () => {
             <TableCell style={{ minWidth: 200 }}>{item.pic}</TableCell>
             <TableCell>{item.tableNumber}</TableCell>
             <TableCell>{renderTime(item.createdTime)} </TableCell>
-            <TableCell>{renderTime(item.reservationTime)}</TableCell>
+            <TableCell>{renderRsvTime(item.reservationTime)}</TableCell>
             <TableCell>
               <Tooltip title='Create Order' arrow>
                 <IconButton
