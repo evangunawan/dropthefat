@@ -1,42 +1,36 @@
 import * as React from 'react';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import { Order } from '../../models/Order';
+import { MenuOrder } from '../../models/MenuOrder';
 import {
+  TableRow,
+  TableCell,
   Modal,
   Fade,
   Card,
   CardContent,
+  Grid,
   Typography,
   TableContainer,
   Table,
   TableHead,
-  TableRow,
-  TableCell,
   TableBody,
-  Grid,
+  Divider,
   CardActions,
   Button,
-  Divider,
-  TextField,
-  IconButton,
 } from '@material-ui/core';
-import { Check } from '@material-ui/icons';
-import { Order } from '../../models/Order';
-import { MenuOrder } from '../../models/MenuOrder';
 import { renderCurrency } from '../../util/RenderUtil';
 
 interface ModalProps {
-  open: boolean;
-  onClose(): void;
   order: Order;
-  onSubmit(promoCode: string): void;
+  onClose(): void;
+  open: boolean;
 }
 
-const PaymentModal = (props: ModalProps) => {
-  const [promoCode, setPromoCode] = React.useState('');
+const TransactionModal = (props: ModalProps) => {
   const [discount, setDiscount] = React.useState(0);
-  const [promoHelperText, setPromoHelperText] = React.useState('');
-  const [promoError, setPromoError] = React.useState(false);
+  const [promoCode, setPromoCode] = React.useState('');
 
   const modalStyle: React.CSSProperties = {
     display: 'flex',
@@ -51,50 +45,26 @@ const PaymentModal = (props: ModalProps) => {
     outline: 0,
   };
 
-  const checkPromo = async () => {
+  const fetchPromo = async () => {
+    console.log('Fetching promo info');
     const db = firebase.firestore();
-    // console.log('checking promo');
-    console.log('PromoCode: ' + promoCode);
     const result = await db
-      .collection('promo')
-      .where('codeId', '==', promoCode)
+      .collection('transaction')
+      .where('order', '==', props.order.id)
       .get();
-    if (result.size < 1) {
-      console.log('Code not Exists');
-      setPromoHelperText('Code not found!');
-      setPromoError(true);
-    } else {
+    if (result.size > 0) {
       result.forEach((doc) => {
-        if (doc.data().startDate > Date.now() || doc.data().expiredDate < Date.now()) {
-          setPromoHelperText('Code can not be used!');
-          setPromoError(true);
-        } else {
-          console.log('set discount!');
-          setDiscount(doc.data().discount);
-          setPromoHelperText('Code applied!');
-          setPromoError(false);
-        }
+        setPromoCode(doc.data().promoCode);
+        db.collection('promo')
+          .where('codeId', '==', doc.data().promoCode)
+          .get()
+          .then((qS) => {
+            qS.forEach((doc) => {
+              setDiscount(doc.data().discount);
+            });
+          });
       });
     }
-  };
-
-  //Submitting a payment is finishing the payment.
-  //Here we will complete the order and update some value in db.
-  const handleSubmit = () => {
-    props.onClose();
-    setPromoCode('');
-    setPromoError(false);
-    setPromoHelperText('');
-    setDiscount(0);
-    props.onSubmit(promoCode || '');
-  };
-
-  const handleClose = () => {
-    props.onClose();
-    setPromoCode('');
-    setPromoError(false);
-    setPromoHelperText('');
-    setDiscount(0);
   };
 
   const renderTableItem = (items: MenuOrder[]) => {
@@ -116,6 +86,19 @@ const PaymentModal = (props: ModalProps) => {
     }
   };
 
+  const handleClose = () => {
+    setDiscount(0);
+    setPromoCode('');
+    props.onClose();
+  };
+
+  React.useEffect(() => {
+    if (props.open) {
+      fetchPromo();
+    }
+    // eslint-disable-next-line
+  }, [props.open]);
+
   return (
     <Modal open={props.open} onClose={props.onClose} style={modalStyle}>
       <Fade in={props.open}>
@@ -128,7 +111,7 @@ const PaymentModal = (props: ModalProps) => {
               spacing={5}
               style={{ padding: 16 }}
             >
-              <Typography variant='h5'>Make Payment</Typography>
+              <Typography variant='h5'>Transaction</Typography>
               <Typography variant='body2'>
                 Table Number: {props.order.tableNumber}
               </Typography>
@@ -153,30 +136,14 @@ const PaymentModal = (props: ModalProps) => {
                 </Typography>
                 <Typography variant='body2' align='right'>
                   {discount !== 0
-                    ? `Promo ${discount * 100}%: -${renderCurrency(
+                    ? `Promo ${promoCode} ${discount * 100}%: -${renderCurrency(
                         (props.order.total + props.order.total * 0.15) * discount
                       )}`
                     : null}
                 </Typography>
                 <Divider style={{ margin: '8px 0px' }} />
               </Grid>
-              <Grid container justify='space-between' alignItems='center' direction='row'>
-                <Grid item>
-                  <TextField
-                    label='Promo Code'
-                    type='text'
-                    style={{ width: 150 }}
-                    value={promoCode}
-                    onChange={(ev) => {
-                      setPromoCode(ev.target.value);
-                    }}
-                    helperText={promoHelperText}
-                    error={promoError}
-                  />
-                  <IconButton style={{ margin: 16 }} onClick={checkPromo} size='small'>
-                    <Check />
-                  </IconButton>
-                </Grid>
+              <Grid container justify='flex-end' alignItems='center' direction='row'>
                 <Grid item>
                   <Typography
                     variant='body2'
@@ -200,17 +167,6 @@ const PaymentModal = (props: ModalProps) => {
             <Button variant='text' onClick={handleClose} style={{ marginLeft: 'auto' }}>
               <b>Close</b>
             </Button>
-            <Button variant='text' color='secondary'>
-              <b>Print</b>
-            </Button>
-            <Button
-              variant='contained'
-              disabled={promoError}
-              color='primary'
-              onClick={() => handleSubmit()}
-            >
-              <b>Submit</b>
-            </Button>
           </CardActions>
         </Card>
       </Fade>
@@ -218,4 +174,4 @@ const PaymentModal = (props: ModalProps) => {
   );
 };
 
-export default PaymentModal;
+export default TransactionModal;

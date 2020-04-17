@@ -14,11 +14,12 @@ import {
   IconButton,
   Tooltip,
 } from '@material-ui/core';
-import { List, Payment } from '@material-ui/icons';
+import { List, Payment, History } from '@material-ui/icons';
 import OrderMenuModal from './OrderMenuModal';
 import { renderCurrency, renderTime } from '../../util/RenderUtil';
 import PaymentModal from './PaymentModal';
 import FullScreenSpinner from '../FullScreenSpinner';
+import TransactionModal from './TransactionModal';
 
 interface TableProps {
   items: Order[];
@@ -45,6 +46,7 @@ const OrderTable = (props: TableProps) => {
   const [page, setPage] = React.useState(0);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = React.useState(false);
+  const [transactionModal, setTransactionModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const defaultOrder: Order = {
@@ -69,6 +71,11 @@ const OrderTable = (props: TableProps) => {
     setModalItem(item);
   };
 
+  const showTransactionModal = (item: Order) => {
+    setTransactionModal(true);
+    setModalItem(item);
+  };
+
   const handleChangePage = (event: unknown | null, newPage: number) => {
     setPage(newPage);
   };
@@ -77,9 +84,11 @@ const OrderTable = (props: TableProps) => {
     setPage(0);
   };
 
-  const handlePaymentSubmit = async () => {
+  const handlePaymentSubmit = async (code: string) => {
     const db = firebase.firestore();
     setLoading(true);
+
+    //Update the order document status to completed
     console.log('Updating Order ' + modalItem.id);
     await db
       .collection('order')
@@ -89,6 +98,7 @@ const OrderTable = (props: TableProps) => {
       })
       .catch((err) => console.log(err));
 
+    //Update the table, set it available.
     console.log('Updating Table ' + modalItem.tableNumber);
     await db
       .collection('table')
@@ -101,6 +111,13 @@ const OrderTable = (props: TableProps) => {
           });
         });
       });
+
+    //Now, lets record the transaction!
+    await db.collection('transaction').add({
+      order: modalItem.id,
+      promoCode: code,
+    });
+
     setLoading(false);
     props.onRefreshItems();
   };
@@ -135,13 +152,24 @@ const OrderTable = (props: TableProps) => {
               {item.status === 'active' ? (
                 <Tooltip title='Make Payment' arrow>
                   <IconButton
-                    aria-label='Payment'
                     style={{ width: 50 }}
                     onClick={() => {
                       showPaymentModal(item);
                     }}
                   >
                     <Payment />
+                  </IconButton>
+                </Tooltip>
+              ) : null}
+              {item.status === 'completed' ? (
+                <Tooltip title='View Transaction' arrow>
+                  <IconButton
+                    style={{ width: 50 }}
+                    onClick={() => {
+                      showTransactionModal(item);
+                    }}
+                  >
+                    <History />
                   </IconButton>
                 </Tooltip>
               ) : null}
@@ -184,9 +212,14 @@ const OrderTable = (props: TableProps) => {
         open={paymentModalOpen}
         order={modalItem}
         onClose={() => setPaymentModalOpen(false)}
-        onSubmit={() => {
-          handlePaymentSubmit();
+        onSubmit={(code) => {
+          handlePaymentSubmit(code);
         }}
+      />
+      <TransactionModal
+        open={transactionModal}
+        order={modalItem}
+        onClose={() => setTransactionModal(false)}
       />
     </div>
   );
