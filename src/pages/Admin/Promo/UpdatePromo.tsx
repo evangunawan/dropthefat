@@ -58,6 +58,7 @@ const UpdatePromo = () => {
     setPromoDiscount(String(result.discount));
     setSelectedStartedDate(new Date(result.startDate));
     setSelectedExpiredDate(new Date(result.expiredDate));
+    setLoading(false);
   };
   const updatePromo = async (promoId: string) => {
     const db = firebase.firestore();

@@ -20,6 +20,7 @@ import {
   Receipt,
   MonetizationOn,
   EventSeat,
+  Loyalty,
 } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -63,6 +64,12 @@ const MainDrawer = (props: DrawerProps) => {
             text='Menu'
             link='/admin/menu'
             icon={<RestaurantMenu />}
+            onLink={props.onClose}
+          />
+          <DrawerItem
+            text='Promo'
+            link='/admin/promo'
+            icon={<Loyalty />}
             onLink={props.onClose}
           />
           <DrawerItem
