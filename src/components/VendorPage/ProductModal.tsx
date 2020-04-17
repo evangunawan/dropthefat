@@ -60,7 +60,7 @@ const ProductModal = (props: ModalProps) => {
     setPage(0);
   };
 
-  const renderUnitType = (val: String) => {
+  const renderUnitType = (val: string) => {
     if (val === 'kg') return 'Kilogram (kg)';
     else if (val === 'liter') return 'Liter (cc)';
     else if (val === 'unit') return 'Unit (pcs)';
@@ -68,15 +68,17 @@ const ProductModal = (props: ModalProps) => {
 
   const renderTableItem = (items: Product[]) => {
     if (items.length > 0) {
-      const result = items.map((item, k) => {
-        return (
-          <TableRow key={k}>
-            <TableCell style={{ height: 40 }}>{item.name}</TableCell>
-            <TableCell style={{ height: 40 }}>{renderUnitType(item.unit)}</TableCell>
-            <TableCell style={{ height: 40 }}>{renderCurrency(item.price)}</TableCell>
-          </TableRow>
-        );
-      });
+      const result = items
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((item, k) => {
+          return (
+            <TableRow key={k}>
+              <TableCell style={{ height: 40 }}>{item.name}</TableCell>
+              <TableCell style={{ height: 40 }}>{renderUnitType(item.unit)}</TableCell>
+              <TableCell style={{ height: 40 }}>{renderCurrency(item.price)}</TableCell>
+            </TableRow>
+          );
+        });
       return result;
     } else {
       return (

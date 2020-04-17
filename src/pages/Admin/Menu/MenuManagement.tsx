@@ -20,6 +20,7 @@ import { Add } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Menu } from '../../../models/Menu';
 import FullScreenSpinner from '../../../components/FullScreenSpinner';
+import { renderCurrency } from '../../../util/RenderUtil';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -144,7 +145,7 @@ const MenuManagement = () => {
           <TableRow key={k}>
             <TableCell>{item.name}</TableCell>
             <TableCell>{renderMenuType(item.type)}</TableCell>
-            <TableCell>{item.price}</TableCell>
+            <TableCell>{renderCurrency(item.price)}</TableCell>
             <TableCell style={{ textAlign: 'center' }}>
               <Button color='primary' onClick={() => updateMenu(item)}>
                 Update

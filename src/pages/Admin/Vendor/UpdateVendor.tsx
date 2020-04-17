@@ -188,7 +188,7 @@ const UpdateVendor = () => {
     }
   };
 
-  const updateVendor = async (vendorId: String) => {
+  const updateVendor = async (vendorId: string) => {
     const db = firebase.firestore();
     setLoading(true);
     await db
