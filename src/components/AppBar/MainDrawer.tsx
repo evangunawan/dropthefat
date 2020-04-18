@@ -71,7 +71,7 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<Loyalty />}
             onLink={props.onClose}
           />
-          <DrawerItem
+          {/* <DrawerItem
             text='Employees'
             link='/admin/employees'
             icon={<People />}
@@ -82,7 +82,7 @@ const MainDrawer = (props: DrawerProps) => {
             link='/admin/tables'
             icon={<Deck />}
             onLink={props.onClose}
-          />
+          /> */}
         </List>
         <List subheader={<ListSubheader>Purchasing</ListSubheader>}>
           <DrawerItem
@@ -91,12 +91,12 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<Business />}
             onLink={props.onClose}
           />
-          <DrawerItem
+          {/* <DrawerItem
             text='Ingredients'
             link='/admin/ingredients'
             icon={<ShoppingCart />}
             onLink={props.onClose}
-          />
+          /> */}
           <DrawerItem
             text='Expenditure'
             link='/admin/expenditure'
