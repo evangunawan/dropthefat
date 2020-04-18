@@ -146,7 +146,7 @@ const PromoManagement = () => {
             <TableCell>{item.title}</TableCell>
             <TableCell>{renderTime(item.startDate)}</TableCell>
             <TableCell>{renderTime(item.expiredDate)}</TableCell>
-            <TableCell>{renderDiscount(0.5)}</TableCell>
+            <TableCell>{renderDiscount(item.discount)}</TableCell>
             <TableCell style={{ textAlign: 'center' }}>
               <Button color='primary' onClick={() => updatePromo(item)}>
                 Update
@@ -184,7 +184,7 @@ const PromoManagement = () => {
               history.push(`${location.pathname}/create`);
             }}
           >
-            Add New Menu
+            Add New Promo
           </Button>
         </form>
       </div>

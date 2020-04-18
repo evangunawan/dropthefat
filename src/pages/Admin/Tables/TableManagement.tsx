@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const TableManagement = () => {
-  return <div>hellow</div>;
+  return <div>Table Management</div>;
 };
 
 export default TableManagement;
