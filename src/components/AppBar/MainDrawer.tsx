@@ -18,7 +18,6 @@ import {
   Business,
   ShoppingCart,
   Receipt,
-  MonetizationOn,
   EventSeat,
   Loyalty,
 } from '@material-ui/icons';
@@ -132,14 +131,6 @@ const MainDrawer = (props: DrawerProps) => {
             text='Reservation'
             link='/reservations'
             icon={<EventSeat />}
-            onLink={props.onClose}
-          />
-        </List>
-        <List subheader={<ListSubheader>Cashier</ListSubheader>}>
-          <DrawerItem
-            text='Payment'
-            link='/payment'
-            icon={<MonetizationOn />}
             onLink={props.onClose}
           />
         </List>
