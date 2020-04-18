@@ -401,7 +401,7 @@ const CreateOrder = () => {
         }
       }
 
-      setTableMessage(`No available table at the moment with size ${selectedSize}`);
+      setTableMessage(`There is no available table. Please check for reservations.`);
       setSelectedTable({
         status: 'unavailable',
         type: 'unknown',
