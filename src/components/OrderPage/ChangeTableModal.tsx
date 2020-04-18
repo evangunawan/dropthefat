@@ -31,7 +31,7 @@ interface BoxProps {
 const TableButton = (props: BoxProps) => {
   const getColor = () => {
     if (props.item.status === 'unavailable') return '#616161';
-    else if (props.item.status === 'dining') return '$1976d2';
+    else if (props.item.status === 'dining') return '#1976d2';
     else if (props.item.status === 'reserved') {
       if (props.rsvTime > 7200000) return '#4caf50';
       else return '#ff9800';
