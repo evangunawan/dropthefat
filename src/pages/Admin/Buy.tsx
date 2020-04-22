@@ -144,7 +144,10 @@ const MaterialTable = (props: TableProps) => {
 
 const Buy = () => {
   const [pic, setPic] = React.useState('');
-  const [vendor, setVendor] = React.useState('');
+  const [setState]= React.useState(0);
+  const [vendor, setVendor] = React.useState<Vendor[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [materialList, setMaterialList] = React.useState<Product[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -159,8 +162,9 @@ const Buy = () => {
   };
   const [selectedVendor, setSelectedVendor] = React.useState<Vendor>(defaultVendor);
   const [loading, setLoading] = React.useState(false);
-  const db = firebase.firestore();
   const history = useHistory();
+  const db = firebase.firestore();
+
 
   const handleSearchVendor = (ev: any) => {
     setTxtSearch(ev.target.value);
@@ -185,7 +189,7 @@ const Buy = () => {
   };
 
   const fetchVendor = async () => {
-    const db = firebase.firestore();
+    
     const result: Vendor[] = [];
     setLoading(true);
     await db
@@ -218,28 +222,9 @@ const Buy = () => {
     setLoading(false);
   };
 
-  async function fetchMaterial() {
-    const result: Product[] = [];
-    await db
-      .collection('vendor.products')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const newMaterial: Product = {
-            name: data.name,
-            unit : data.unit,
-            price: data.price as number,
-          };
-           console.log(`Loading ${newMaterial.name} (${newMaterial.id})`);
-           result.push(newMaterial);
-        });
-      });
-    setMaterialList(result);
-  }
 
   React.useEffect(() => {
-    fetchMaterial();
+    fetchVendor();
     // eslint-disable-next-line
   }, []);
 
@@ -277,12 +262,13 @@ const Buy = () => {
     // console.log(menuList);
   };
 
+  
   //Add selected menu from modal into table (state items)
-  const addSelectedMaterial = (item: Material) => {
+  const addSelectedMaterial = (item: Product) => {
     // const temp = [...items, item];
     // setItems(temp);
     const newPurchase: MaterialPurchase = {
-      material: item,
+      product: item,
       quantity: 1,
       total: item.price,
     };
@@ -304,9 +290,9 @@ const Buy = () => {
     const mPurchase: { material: string; quantity: number }[] = [];
     let grandTotal = 0;
     purchase.forEach((item) => {
-      grandTotal = grandTotal + item.material.price * item.quantity;
+      grandTotal = grandTotal + item.product.price * item.quantity;
       mPurchase.push({
-        material: item.material.id || 'undefined',
+        material: item.product.name || 'undefined',
         quantity: item.quantity,
       });
     });
@@ -354,14 +340,7 @@ const Buy = () => {
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
-          <TextField
-            fullWidth
-            label='Vendor'
-            variant='outlined'
-            value={vendor}
-            onChange={(ev) => setVendor(ev.target.value)}
-          />
-
+          
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
            Ingredient Order
           </Typography>
@@ -402,13 +381,14 @@ const Buy = () => {
           <b>Create Purchasement</b>
         </Button>
       </div>
-      <AddMaterialModal
+
+      <AddProductModal
         open={modalOpen}
-        materialList={materialList}
+        productList={materialList}
         onClose={() => {
           setModalOpen(false);
         }}
-        onMaterialAdd={(item) => {
+        onProductAdd={(item) => {
           addSelectedMaterial(item);
         }}
       />
