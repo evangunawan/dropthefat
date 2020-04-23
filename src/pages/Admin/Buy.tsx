@@ -153,8 +153,6 @@ const Buy = () => {
   const [pic, setPic] = React.useState('');
   const [setState]= React.useState(0);
   const [vendor, setVendor] = React.useState<Vendor[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [materialList, setMaterialList] = React.useState<Product[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -169,7 +167,6 @@ const Buy = () => {
   };
   const [selectedVendor, setSelectedVendor] = React.useState<Vendor>(defaultVendor);
   const [loading, setLoading] = React.useState(false);
-  const [vendorModalOpen, setVendorModalOpen] = React.useState(false);
   const history = useHistory();
   const db = firebase.firestore();
 
@@ -220,15 +217,8 @@ const Buy = () => {
     setLoading(false);
   };
 
-  // const handleSearchVendor = (ev: any) => {
-  //   setTxtSearch(ev.target.value);
-  //   const temp = vendor.filter((item: any) =>
-  //     item.name.toLowerCase().includes(ev.target.value.toLowerCase())
-  //   );
-  //   setFilterVendor(temp);
-  // };
 
-  const renderVendorItems = (ev:any ) => {
+  const renderVendorItems = (ev:Vendor[] ) => {
     const filtered = vendor.filter((item: any) => {
     });
     const result = filtered.map((item: any) => {
