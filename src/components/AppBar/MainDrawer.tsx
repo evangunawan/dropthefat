@@ -14,9 +14,9 @@ import {
   RestaurantMenu,
   Home,
   People,
-  Deck,
+  // Deck,
   Business,
-  ShoppingCart,
+  // ShoppingCart,
   Receipt,
   EventSeat,
   Loyalty,
@@ -71,13 +71,13 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<Loyalty />}
             onLink={props.onClose}
           />
-          {/* <DrawerItem
+          <DrawerItem
             text='Employees'
             link='/admin/employees'
             icon={<People />}
             onLink={props.onClose}
           />
-          <DrawerItem
+          {/* <DrawerItem
             text='Tables'
             link='/admin/tables'
             icon={<Deck />}

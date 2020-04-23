@@ -22,6 +22,9 @@ import CreateVendor from '../pages/Admin/Vendor/CreateVendor';
 import PromoManagement from '../pages/Admin/Promo/PromoManagement';
 import CreatePromo from '../pages/Admin/Promo/CreatePromo';
 import UpdatePromo from '../pages/Admin/Promo/UpdatePromo';
+import EmployeeManagement from '../pages/Admin/Employee/EmployeeManagement';
+import CreateEmployee from '../pages/Admin/Employee/CreateEmployee';
+import UpdateEmployee from '../pages/Admin/Employee/UpdateEmployee';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -62,6 +65,19 @@ export default class MainRoutes extends React.Component {
                 <Route exact path={`${match.url}/vendor`} component={VendorManagement} />
                 <Route path={`${match.url}/vendor/update/:id`} component={UpdateVendor} />
                 <Route path={`${match.url}/vendor/create`} component={CreateVendor} />
+                <Route
+                  exact
+                  path={`${match.url}/employees`}
+                  component={EmployeeManagement}
+                />
+                <Route
+                  path={`${match.url}/employees/create`}
+                  component={CreateEmployee}
+                />
+                <Route
+                  path={`${match.url}/employees/update/:id`}
+                  component={UpdateEmployee}
+                />
               </div>
             )}
           />

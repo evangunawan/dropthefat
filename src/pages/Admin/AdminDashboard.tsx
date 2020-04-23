@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core';
 import Container from '../../components/Container';
 import Cookies from 'universal-cookie';
 import { useHistory } from 'react-router-dom';
-import { SupervisorAccount } from '@material-ui/icons';
+import { EmojiPeople } from '@material-ui/icons';
 
 const cookie = new Cookies();
 
@@ -45,9 +45,7 @@ const AdminDashboard = () => {
     <Container width='1000px'>
       <Typography variant='h4' style={{ paddingTop: 300, textAlign: 'center' }}>
         Welcome to Admin Page{' '}
-        <SupervisorAccount
-          style={{ marginLeft: 8, marginBottom: -10, width: 50, height: 50 }}
-        />
+        <EmojiPeople style={{ marginBottom: -10, width: 50, height: 50 }} />
       </Typography>
     </Container>
   );
