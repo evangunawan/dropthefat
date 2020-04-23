@@ -14,6 +14,10 @@ import {
   IconButton,
   Grid,
   Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Product } from '../../models/Product';
@@ -178,19 +182,10 @@ const Buy = () => {
     setFilterVendor(temp);
   };
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
+  const handleChangeVendor = (ev : any) =>{
+    setSelectedVendor(ev.target.value);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const fetchVendor = async () => { 
     const result: Vendor[] = [];
@@ -223,6 +218,25 @@ const Buy = () => {
     setVendor(result);
     setFilterVendor(result);
     setLoading(false);
+  };
+
+  // const handleSearchVendor = (ev: any) => {
+  //   setTxtSearch(ev.target.value);
+  //   const temp = vendor.filter((item: any) =>
+  //     item.name.toLowerCase().includes(ev.target.value.toLowerCase())
+  //   );
+  //   setFilterVendor(temp);
+  // };
+
+  const renderVendorItems = (ev:any ) => {
+    const filtered = vendor.filter((item: any) => {
+    });
+    const result = filtered.map((item: any) => {
+      return (
+        <MenuItem value={item.id}>item.name</MenuItem>
+      );
+    });
+    return result;
   };
 
 
@@ -340,7 +354,7 @@ const Buy = () => {
             onChange={(ev) => setPic(ev.target.value)}
           />
 
-            <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
+            {/* <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
               <Grid container justify='flex-end' alignItems='center'>
                 <div style={{ margin: '0px 32px' }}>
                   <Typography variant='h6'>Vendor Selected</Typography>
@@ -360,7 +374,23 @@ const Buy = () => {
                   Change...
                 </Button>
               </Grid>
-            </Grid>
+            </Grid> */}
+
+          <FormControl variant='outlined'>
+            <InputLabel id='select-menu-type'>Vendor Name</InputLabel>
+            <Select
+              label='Vendor Name'
+              style={{ marginBottom: 20, width: 500 }}
+              value={selectedVendor}
+              onChange={handleChangeVendor}
+              variant='outlined'
+            >
+              <MenuItem value='Choose One' disabled>
+                - Choose One -
+              </MenuItem>
+             {renderVendorItems}
+            </Select>
+          </FormControl>
           
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
            Ingredient Order
@@ -412,12 +442,6 @@ const Buy = () => {
         onProductAdd={(item) => {
           addSelectedMaterial(item);
         }}
-      />
-      <ChangeVendorModal
-        open={vendorModalOpen}
-        vendorList={vendor}
-        onClose={() => setVendorModalOpen(false)}
-        onTableSelect={(item: Vendor) => setSelectedVendor(item)}
       />
       <FullScreenSpinner open={loading} />
     </Container>
