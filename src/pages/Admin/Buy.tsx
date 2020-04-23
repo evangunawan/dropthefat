@@ -12,6 +12,8 @@ import {
   TableCell,
   Button,
   IconButton,
+  Grid,
+  Box,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Product } from '../../models/Product';
@@ -24,6 +26,7 @@ import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
+import  ChangeVendorModal  from '../../components/BuyMaterial/ChangeVendorModal';
 
 interface TableProps {
   purchases: MaterialPurchase[];
@@ -162,6 +165,7 @@ const Buy = () => {
   };
   const [selectedVendor, setSelectedVendor] = React.useState<Vendor>(defaultVendor);
   const [loading, setLoading] = React.useState(false);
+  const [vendorModalOpen, setVendorModalOpen] = React.useState(false);
   const history = useHistory();
   const db = firebase.firestore();
 
@@ -319,10 +323,6 @@ const Buy = () => {
     setPurchase(temp);
   };
 
-  if (materialList.length < 1) {
-    return <p>Loading Material...</p>;
-  }
-
   return (
     <Container width='1000px' style={containerStyle}>
       <div style={{ flexGrow: 1 }}>
@@ -340,6 +340,28 @@ const Buy = () => {
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
+
+            <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
+              <Grid container justify='flex-end' alignItems='center'>
+                <div style={{ margin: '0px 32px' }}>
+                  <Typography variant='h6'>Vendor Selected</Typography>
+                  <Typography variant='body2' color='textSecondary'>
+                    Id: {selectedVendor.id}
+                  </Typography>
+                </div>
+                <div style={{ marginRight: 32 }}>
+                  <Typography variant='h6'>{selectedVendor.name}</Typography>
+                </div>
+                <Button
+                  disableRipple
+                  variant='contained'
+                  color='primary'
+                  onClick={() => setVendorModalOpen(true)}
+                >
+                  Change...
+                </Button>
+              </Grid>
+            </Grid>
           
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
            Ingredient Order
@@ -391,6 +413,12 @@ const Buy = () => {
         onProductAdd={(item) => {
           addSelectedMaterial(item);
         }}
+      />
+      <ChangeVendorModal
+        open={vendorModalOpen}
+        vendorList={vendor}
+        onClose={() => setVendorModalOpen(false)}
+        onTableSelect={(item: Vendor) => setSelectedVendor(item)}
       />
       <FullScreenSpinner open={loading} />
     </Container>

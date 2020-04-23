@@ -11,105 +11,82 @@ import {
   Button,
 } from '@material-ui/core';
 import { Vendor } from '../../models/Vendor';
-import { Product } from '../../models/Product';
-const [vendor, setVendor] = React.useState<Vendor[]>([]);
-const [loading, setLoading] = React.useState(false);
-const db = firebase.firestore();
-const [filterVendor, setFilterVendor] = React.useState([] as any[]);
 
 interface ModalProps {
   open: boolean;
   onClose(): void;
   vendorList: Vendor[];
-  onVendorSelect(item: Vendor): void;
+  onTableSelect(item: Vendor): void;
   // onMenuAdd(item: DiningTable): void;
 }
 
 interface BoxProps {
   item: Vendor;
-  rsvTime: number;
   onClick(): void;
 }
 
-const VendorButton = (props: BoxProps) => {
+const TableButton = (props: BoxProps) => {
+  const getColor = () => {
+      return '#ff9800';
+  };
 
-//   return (
-//     <Grid item xs={3}>
-//       <Button
-//         disableRipple
-//         fullWidth
-//         variant='contained'
-//         style={style}
-//         onClick={props.onClick}
-//         disabled={isTableDisabled()}
-//       >
-//         {`Table ${props.item.tableNumber}`}
-//       </Button>
-//     </Grid>
-//   );
-// };
+  const style: React.CSSProperties = {
+    height: 100,
+    backgroundColor: getColor() || '#fff',
+    color: '#fff',
+  };
 
-//   const renderTableItems = (items: DiningTable[], guests: number) => {
-//     const filtered = items.filter((item: DiningTable) => {
-//       return item.type === getTableType(guests);
-//     });
-//     const result = filtered.map((item: DiningTable) => {
-//       const rsvTime =
-//         reservations.find((rsv) => rsv.tableNumber === item.tableNumber)
-//           ?.reservationTime || 0;
-//       return (
-//         <TableButton
-//           item={item}
-//           onClick={() => {
-//             props.onTableSelect(item);
-//             props.onClose();
-//           }}
-//           rsvTime={rsvTime}
-//           key={item.id}
-//         />
-//       );
-//     });
-//     return result;
-//   };
+  return (
+    <Grid item xs={3}>
+      <Button
+        disableRipple
+        fullWidth
+        variant='contained'
+        style={style}
+        onClick={props.onClick}
+      >
+        {`Table ${props.item.name}`}
+      </Button>
+    </Grid>
+  );
+};
 
-const fetchVendor = async () => {
-    
-    const result: Vendor[] = [];
-    setLoading(true);
-    await db
-      .collection('vendor')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const listProduct: Product[] = [];
-          doc.data().products.forEach((item: any) => {
-            const newProduct: Product = {
-              name: item.name,
-              unit: item.unit || 'unit',
-              price: item.price,
-            };
-            listProduct.push(newProduct);
-          });
-          const newVendor: Vendor = {
-            id: doc.id,
-            name: doc.data().name,
-            address: doc.data().address,
-            contact: doc.data().contact,
-            products: listProduct,
-          };
-          result.push(newVendor);
-          // console.log(doc.data());
-        });
-      });
-    setVendor(result);
-    setFilterVendor(result);
-    setLoading(false);
+const ChangeTableModal = (props: ModalProps) => {
+  const [reservations, setReservations] = React.useState<Vendor[]>([]);
+  const modalStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const cardStyle: React.CSSProperties = {
+    outline: 0,
+    padding: '8px',
+    width: 700,
   };
 
 
+  const renderVendorItems = (items: Vendor[] ) => {
+    const filtered = items.filter((item: Vendor) => {
+    });
+    const result = filtered.map((item: Vendor) => {
+      return (
+        <TableButton
+          item={item}
+          onClick={() => {
+            props.onTableSelect(item);
+            props.onClose();
+          }}
+          key={item.id}
+        />
+      );
+    });
+    return result;
+  };
 
+  
   React.useEffect(() => {
-    fetchVendor();
+    // fetchReservations();
     // eslint-disable-next-line
   }, []);
 
@@ -119,10 +96,7 @@ const fetchVendor = async () => {
         <Card style={cardStyle}>
           <CardContent>
             <Grid container justify='space-between' alignItems='center'>
-              <Typography variant='h5'>Select Table</Typography>
-              <Typography variant='body2'>{`Guest: ${
-                props.guests
-              } person, Table type: ${getTableType(props.guests)}`}</Typography>
+              <Typography variant='h5'>Select Vendor</Typography>
             </Grid>
             <Grid
               container
@@ -130,16 +104,8 @@ const fetchVendor = async () => {
               spacing={3}
               style={{ margin: '16px 0px' }}
             >
-              {renderTableItems(props.tableList, props.guests)}
+              {renderVendorItems(props.vendorList)}
             </Grid>
-            <div>
-              <Typography variant='body2' color='textSecondary'>
-                <i>
-                  *Green: Available, Blue: Dining/Active, Orange: Reserved under 2 hours,
-                  Grey: Unavailable
-                </i>
-              </Typography>
-            </div>
           </CardContent>
         </Card>
       </Fade>

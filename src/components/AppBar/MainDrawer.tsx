@@ -103,6 +103,13 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<Receipt />}
             onLink={props.onClose}
           />
+
+          <DrawerItem
+            text='Buy Ingredients'
+            link='/admin/buy'
+            icon={<Receipt />}
+            onLink={props.onClose}
+          />
         </List>
       </div>
     );

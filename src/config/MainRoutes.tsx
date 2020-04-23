@@ -22,6 +22,7 @@ import CreateVendor from '../pages/Admin/Vendor/CreateVendor';
 import PromoManagement from '../pages/Admin/Promo/PromoManagement';
 import CreatePromo from '../pages/Admin/Promo/CreatePromo';
 import UpdatePromo from '../pages/Admin/Promo/UpdatePromo';
+import Buy from '../pages/Admin/Buy';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -62,6 +63,8 @@ export default class MainRoutes extends React.Component {
                 <Route exact path={`${match.url}/vendor`} component={VendorManagement} />
                 <Route path={`${match.url}/vendor/update/:id`} component={UpdateVendor} />
                 <Route path={`${match.url}/vendor/create`} component={CreateVendor} />
+                
+                <Route path={`${match.url}/buy`} component={Buy} />
               </div>
             )}
           />
