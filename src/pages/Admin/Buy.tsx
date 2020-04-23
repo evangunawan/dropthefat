@@ -192,8 +192,7 @@ const Buy = () => {
     setPage(0);
   };
 
-  const fetchVendor = async () => {
-    
+  const fetchVendor = async () => { 
     const result: Vendor[] = [];
     setLoading(true);
     await db

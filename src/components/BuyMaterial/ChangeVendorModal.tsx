@@ -11,6 +11,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { Vendor } from '../../models/Vendor';
+import { Product } from '../../models/Product';
 
 interface ModalProps {
   open: boolean;
@@ -52,7 +53,45 @@ const TableButton = (props: BoxProps) => {
 };
 
 const ChangeTableModal = (props: ModalProps) => {
-  const [reservations, setReservations] = React.useState<Vendor[]>([]);
+  const [vendor, setVendor] = React.useState<Vendor[]>([]);
+  const [filterVendor, setFilterVendor] = React.useState([] as any[]);
+  const [loading, setLoading] = React.useState(false);
+  const db = firebase.firestore();
+
+
+  const fetchVendor = async () => { 
+    const result: Vendor[] = [];
+    setLoading(true);
+    await db
+      .collection('vendor')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const listProduct: Product[] = [];
+          doc.data().products.forEach((item: any) => {
+            const newProduct: Product = {
+              name: item.name,
+              unit: item.unit || 'unit',
+              price: item.price,
+            };
+            listProduct.push(newProduct);
+          });
+          const newVendor: Vendor = {
+            id: doc.id,
+            name: doc.data().name,
+            address: doc.data().address,
+            contact: doc.data().contact,
+            products: listProduct,
+          };
+          result.push(newVendor);
+          // console.log(doc.data());
+        });
+      });
+    setVendor(result);
+    setFilterVendor(result);
+    setLoading(false);
+  };
+
   const modalStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -64,7 +103,6 @@ const ChangeTableModal = (props: ModalProps) => {
     padding: '8px',
     width: 700,
   };
-
 
   const renderVendorItems = (items: Vendor[] ) => {
     const filtered = items.filter((item: Vendor) => {
