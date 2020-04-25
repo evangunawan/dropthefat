@@ -218,12 +218,11 @@ const Buy = () => {
   };
 
 
-  const renderVendorItems = (ev:Vendor[] ) => {
-    const filtered = vendor.filter((item: any) => {
-    });
-    const result = filtered.map((item: any) => {
+  const renderVendorItems = () => {
+    
+    const result = vendor.map((item: any) => {
       return (
-        <MenuItem value={item.id}>item.name</MenuItem>
+        <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
       );
     });
     return result;
@@ -378,7 +377,7 @@ const Buy = () => {
               <MenuItem value='Choose One' disabled>
                 - Choose One -
               </MenuItem>
-             {renderVendorItems}
+             {renderVendorItems()}
             </Select>
           </FormControl>
           
