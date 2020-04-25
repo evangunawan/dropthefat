@@ -28,7 +28,7 @@ interface BoxProps {
 
 const TableButton = (props: BoxProps) => {
   const getColor = () => {
-      return '#ff9800';
+    return '#ff9800';
   };
 
   const style: React.CSSProperties = {
@@ -58,8 +58,7 @@ const ChangeTableModal = (props: ModalProps) => {
   const [loading, setLoading] = React.useState(false);
   const db = firebase.firestore();
 
-
-  const fetchVendor = async () => { 
+  const fetchVendor = async () => {
     const result: Vendor[] = [];
     setLoading(true);
     await db
@@ -104,10 +103,8 @@ const ChangeTableModal = (props: ModalProps) => {
     width: 700,
   };
 
-  const renderVendorItems = (items: Vendor[] ) => {
-    const filtered = items.filter((item: Vendor) => {
-    });
-    const result = filtered.map((item: Vendor) => {
+  const renderVendorItems = (items: Vendor[]) => {
+    const result = items.map((item: Vendor) => {
       return (
         <TableButton
           item={item}
@@ -122,7 +119,6 @@ const ChangeTableModal = (props: ModalProps) => {
     return result;
   };
 
-  
   React.useEffect(() => {
     // fetchReservations();
     // eslint-disable-next-line

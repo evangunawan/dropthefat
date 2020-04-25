@@ -17,7 +17,7 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { Product } from '../../models/Product';
@@ -151,7 +151,7 @@ const MaterialTable = (props: TableProps) => {
 
 const Buy = () => {
   const [pic, setPic] = React.useState('');
-  const [setState]= React.useState(0);
+  const [setState] = React.useState(0);
   const [vendor, setVendor] = React.useState<Vendor[]>([]);
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -165,85 +165,17 @@ const Buy = () => {
     products: [],
   };
 
-  const defaultProduct : Product = {
-    name:'',
-    unit:'unit',
-    price:0,
+  const defaultProduct: Product = {
+    name: '',
+    unit: 'unit',
+    price: 0,
   };
   const [selectedVendor, setSelectedVendor] = React.useState<Vendor>(defaultVendor);
   const [materialList, setMaterialList] = React.useState<Product[]>([]);
+  const [selectedMaterial, setSelectedMaterial] = React.useState<Product>(defaultProduct);
   const [loading, setLoading] = React.useState(false);
   const history = useHistory();
   const db = firebase.firestore();
-
-
-  const handleChangeVendor = (ev : any) =>{
-    setSelectedVendor(ev.target.value);
-    setMaterialList(selectedVendor.products);
-  };
-
-
-  const fetchVendor = async () => { 
-    const result: Vendor[] = [];
-    setLoading(true);
-    await db
-      .collection('vendor')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const listProduct: Product[] = [];
-          doc.data().products.forEach((item: any) => {
-            const newProduct: Product = {
-              name: item.name,
-              unit: item.unit || 'unit',
-              price: item.price,
-            };
-            listProduct.push(newProduct);
-          });
-          const newVendor: Vendor = {
-            id: doc.id,
-            name: doc.data().name,
-            address: doc.data().address,
-            contact: doc.data().contact,
-            products: listProduct,
-          };
-          result.push(newVendor);
-          // console.log(doc.data());
-        });
-      });
-    setVendor(result);
-    setFilterVendor(result);
-    setLoading(false);
-  };
-
-  const renderVendorItems = () => {
-    
-    const result = vendor.map((item: any) => {
-      return (
-        <MenuItem key={item.id} value={item.name}
-        onClick={() =>{setSelectedVendor(item)}} >{item.name}</MenuItem>
-       
-      );
-    });
-    return result;
-  };
-
-  const renderVendorProduct = () => {
-    
-    const result = materialList.map((item: any) => {
-      return (
-        <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
-       
-      );
-    });
-    return result;
-  };
-
-
-  React.useEffect(() => {
-    fetchVendor();
-    // eslint-disable-next-line
-  }, []);
 
   const formStyle: React.CSSProperties = {
     width: '100%',
@@ -274,13 +206,39 @@ const Buy = () => {
     alignSelf: 'center',
   };
 
-  const addMaterial = () => {
-    setModalOpen(true);
-    // console.log(menuList);
+  const fetchVendor = async () => {
+    const result: Vendor[] = [];
+    setLoading(true);
+    await db
+      .collection('vendor')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const listProduct: Product[] = [];
+          doc.data().products.forEach((item: any) => {
+            const newProduct: Product = {
+              name: item.name,
+              unit: item.unit || 'unit',
+              price: item.price,
+            };
+            listProduct.push(newProduct);
+          });
+          const newVendor: Vendor = {
+            id: doc.id,
+            name: doc.data().name,
+            address: doc.data().address,
+            contact: doc.data().contact,
+            products: listProduct,
+          };
+          result.push(newVendor);
+        });
+      });
+    setVendor(result);
+    setFilterVendor(result);
+    setLoading(false);
+    // console.log(result);
   };
 
-  
-  //Add selected menu from modal into table (state items)
   const addSelectedMaterial = (item: Product) => {
     // const temp = [...items, item];
     // setItems(temp);
@@ -336,6 +294,53 @@ const Buy = () => {
     setPurchase(temp);
   };
 
+  const handleChangeVendor = (ev: any) => {
+    setSelectedVendor(ev.target.value);
+  };
+
+  const handleChangeMaterial = (ev: any) => {
+    setSelectedMaterial(ev.target.value);
+  };
+
+  const renderVendorItems = () => {
+    const result = vendor.map((item: any) => {
+      return (
+        <MenuItem key={item.id} value={item}>
+          {item.name}
+        </MenuItem>
+      );
+    });
+    return result;
+  };
+
+  const renderVendorProduct = () => {
+    const result = materialList.map((item: any) => {
+      return (
+        <MenuItem key={item.id} value={item}>
+          {item.name}
+        </MenuItem>
+      );
+    });
+    return result;
+  };
+
+  React.useEffect(() => {
+    fetchVendor();
+    // eslint-disable-next-line
+  }, []);
+
+  React.useEffect(() => {
+    setMaterialList(selectedVendor.products);
+    console.log(selectedVendor);
+  }, [selectedVendor]);
+
+  const addMaterial = () => {
+    setModalOpen(true);
+    // console.log(menuList);
+  };
+
+  //Add selected menu from modal into table (state items)
+
   return (
     <Container width='1000px' style={containerStyle}>
       <div style={{ flexGrow: 1 }}>
@@ -356,7 +361,6 @@ const Buy = () => {
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Vendor Name</InputLabel>
             <Select
-              label='Vendor Name'
               style={{ marginBottom: 20, width: 500 }}
               value={selectedVendor}
               onChange={handleChangeVendor}
@@ -365,29 +369,26 @@ const Buy = () => {
               <MenuItem value='Choose One' disabled>
                 - Choose One -
               </MenuItem>
-             {renderVendorItems()}
+              {renderVendorItems()}
             </Select>
           </FormControl>
-            Vendor : {selectedVendor.name}
-
-            <FormControl variant='outlined'>
+          Vendor : {selectedVendor.name}
+          <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Vendor Product</InputLabel>
             <Select
-              label='Vendor Name'
               style={{ marginBottom: 20, width: 500 }}
-              value={selectedVendor}
-              onChange={handleChangeVendor}
+              value={selectedMaterial}
+              onChange={handleChangeMaterial}
               variant='outlined'
             >
               <MenuItem value='Choose One' disabled>
                 - Choose One -
               </MenuItem>
-             {renderVendorProduct()}
+              {renderVendorProduct()}
             </Select>
-          </FormControl>  
-          
+          </FormControl>
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
-           Ingredient Order
+            Ingredient Order
           </Typography>
           <MaterialTable
             purchases={purchase}
