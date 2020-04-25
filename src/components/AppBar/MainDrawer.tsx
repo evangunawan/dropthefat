@@ -20,6 +20,7 @@ import {
   Receipt,
   EventSeat,
   Loyalty,
+  Deck,
 } from '@material-ui/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -77,12 +78,12 @@ const MainDrawer = (props: DrawerProps) => {
             icon={<People />}
             onLink={props.onClose}
           />
-          {/* <DrawerItem
+          <DrawerItem
             text='Tables'
             link='/admin/tables'
             icon={<Deck />}
             onLink={props.onClose}
-          /> */}
+          />
         </List>
         <List subheader={<ListSubheader>Purchasing</ListSubheader>}>
           <DrawerItem
