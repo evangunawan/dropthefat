@@ -12,15 +12,12 @@ import {
   TablePagination,
   IconButton,
   Tooltip,
-  Button
+  Button,
 } from '@material-ui/core';
 import { List } from '@material-ui/icons';
 import OrderMenuModal from '../OrderPage/OrderMenuModal';
 import { renderCurrency, renderTime } from '../../util/RenderUtil';
-import {
-   useHistory
-  } from "react-router-dom";
-
+import { useHistory } from 'react-router-dom';
 
 interface TableProps {
   items: Product[];
@@ -45,8 +42,8 @@ const PaymentTable = (props: TableProps) => {
 
   const defaultMaterial: Product = {
     name: 'null',
-    unit : 'unit',
-    price: 0
+    unit: 'unit',
+    price: 0,
   };
   const [modalItem, setModalItem] = React.useState<Product>(defaultMaterial);
 
@@ -84,12 +81,12 @@ const PaymentTable = (props: TableProps) => {
           <TableCell>{item.name}</TableCell>
           <TableCell>{renderCurrency(item.price)}</TableCell>
           <TableCell>
-          <Button
-          variant='contained'
-          color='primary'
-          // onClick={payOrder}
+            <Button
+              variant='contained'
+              color='primary'
+              // onClick={payOrder}
             >
-            <b>Buy</b>
+              <b>Buy</b>
             </Button>
           </TableCell>
         </TableRow>
@@ -98,7 +95,6 @@ const PaymentTable = (props: TableProps) => {
 
     return tableBody;
   };
-
 
   return (
     <TableContainer component={Paper} style={{ marginTop: 24 }}>

@@ -65,7 +65,7 @@ const AddProductModal = (props: ModalProps) => {
   const [menuSelect, setMenuSelect] = React.useState('all');
   const [productList] = React.useState<Product[]>(props.productList);
   const [filteredList, setFilteredList] = React.useState<Product[]>(props.productList);
-//   const { vendor }=props;
+  //   const { vendor }=props;
 
   const modalStyle = {
     display: 'flex',
@@ -103,7 +103,6 @@ const AddProductModal = (props: ModalProps) => {
           <CardContent>
             <Typography variant='h6'>Add a Product</Typography>
             <div style={{ marginTop: '16px' }}>
-              
               <Typography variant='body2' color='textSecondary'>
                 Please select an item:
               </Typography>

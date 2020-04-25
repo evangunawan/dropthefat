@@ -63,7 +63,6 @@ export default class MainRoutes extends React.Component {
                 <Route exact path={`${match.url}/vendor`} component={VendorManagement} />
                 <Route path={`${match.url}/vendor/update/:id`} component={UpdateVendor} />
                 <Route path={`${match.url}/vendor/create`} component={CreateVendor} />
-                
                 <Route path={`${match.url}/buy`} component={Buy} />
               </div>
             )}
