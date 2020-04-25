@@ -13,7 +13,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  TextField,
   CardActions,
   Button,
 } from '@material-ui/core';
@@ -21,11 +20,13 @@ import { DiningTable } from '../../../models/DiningTable';
 
 interface ModalProps {
   open: boolean;
-  onClose(): void;
   item: DiningTable;
+  onClose(): void;
+  onUpdate(): void;
 }
 
 const TableItemModal = (props: ModalProps) => {
+  const [loading, setLoading] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
   const [tableNumber, setTableNumber] = React.useState(0);
   const [tableStatus, setTableStatus] = React.useState('available');
@@ -42,6 +43,34 @@ const TableItemModal = (props: ModalProps) => {
     width: 400,
     outline: 0,
     padding: 12,
+  };
+
+  const deleteTable = async (item: DiningTable) => {
+    const db = firebase.firestore();
+    const res = window.confirm(`Are you sure want to delete this table?`);
+    if (res === true) {
+      setLoading(true);
+      await db
+        .collection('table')
+        .doc(item.id)
+        .delete();
+      props.onUpdate();
+      setLoading(false);
+    }
+  };
+
+  const updateTable = async (item: DiningTable) => {
+    const db = firebase.firestore();
+    setLoading(true);
+    await db
+      .collection('table')
+      .doc(item.id)
+      .update({
+        status: tableStatus,
+        type: tableType,
+      });
+    props.onUpdate();
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -70,7 +99,13 @@ const TableItemModal = (props: ModalProps) => {
   }, [props.item]);
 
   return (
-    <Modal open={props.open} onClose={props.onClose} style={modalStyle}>
+    <Modal
+      open={props.open}
+      onClose={props.onClose}
+      style={modalStyle}
+      disableBackdropClick={loading}
+      disableEscapeKeyDown={loading}
+    >
       <Fade in={props.open}>
         <Card style={cardStyle}>
           <CardContent>
@@ -127,7 +162,12 @@ const TableItemModal = (props: ModalProps) => {
           <CardActions>
             {!editMode ? (
               <div style={{ marginLeft: 'auto' }}>
-                <Button variant='text' color='secondary'>
+                <Button
+                  variant='text'
+                  color='secondary'
+                  onClick={() => deleteTable(props.item)}
+                  disabled={loading}
+                >
                   <b>Delete</b>
                 </Button>
                 <Button
@@ -135,24 +175,37 @@ const TableItemModal = (props: ModalProps) => {
                   color='secondary'
                   onClick={() => setEditMode(true)}
                   style={{ marginLeft: 8 }}
+                  disabled={loading}
                 >
                   <b>Edit</b>
                 </Button>
-                <Button variant='text' onClick={handleClose} style={{ marginLeft: 8 }}>
+                <Button
+                  variant='text'
+                  onClick={handleClose}
+                  style={{ marginLeft: 8 }}
+                  disabled={loading}
+                >
                   <b>Close</b>
                 </Button>
               </div>
             ) : (
               <div style={{ marginLeft: 'auto' }}>
-                <Button variant='text' onClick={handleCancelEdit}>
+                <Button variant='text' onClick={handleCancelEdit} disabled={loading}>
                   <b>Cancel</b>
                 </Button>
-                <Button variant='contained' color='primary' style={{ marginLeft: 8 }}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  style={{ marginLeft: 8 }}
+                  onClick={() => updateTable(props.item)}
+                  disabled={loading}
+                >
                   <b>Submit</b>
                 </Button>
               </div>
             )}
           </CardActions>
+          {loading ? 'Please wait...' : null}
         </Card>
       </Fade>
     </Modal>

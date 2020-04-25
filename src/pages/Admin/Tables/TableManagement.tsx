@@ -15,6 +15,7 @@ import {
 import { DiningTable } from '../../../models/DiningTable';
 import TableItemModal from './TableItemModal';
 import { Reservation } from '../../../models/Reservation';
+import CreateTableModal from './CreateTableModal';
 interface BoxProps {
   item: DiningTable;
   rsvTime: number;
@@ -57,7 +58,8 @@ const TableManagement = () => {
     type: 'unknown',
   };
   const [modalItem, setModalItem] = React.useState<DiningTable>(defaultTable);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [detailModal, setDetailModal] = React.useState(false);
+  const [createModal, setCreateModal] = React.useState(false);
   const [selectOpen, setSelectOpen] = React.useState(false);
   const [selectedFilter, setSelectedFilter] = React.useState('all');
 
@@ -109,7 +111,7 @@ const TableManagement = () => {
 
   const handleOpenModal = (item: DiningTable) => {
     setModalItem(item);
-    setModalOpen(true);
+    setDetailModal(true);
   };
 
   const renderTableList = () => {
@@ -168,7 +170,11 @@ const TableManagement = () => {
             </Typography>
           </Grid>
           <Grid item>
-            <Button variant='contained' color='primary'>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => setCreateModal(true)}
+            >
               ADD TABLE
             </Button>
           </Grid>
@@ -211,9 +217,23 @@ const TableManagement = () => {
         </Grid>
       </Grid>
       <TableItemModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={detailModal}
+        onClose={() => setDetailModal(false)}
         item={modalItem}
+        onUpdate={() => {
+          setDetailModal(false);
+          fetchTables();
+          fetchReservations();
+        }}
+      />
+      <CreateTableModal
+        open={createModal}
+        onClose={() => setCreateModal(false)}
+        onUpdate={() => {
+          setCreateModal(false);
+          fetchTables();
+          fetchReservations();
+        }}
       />
     </Container>
   );
