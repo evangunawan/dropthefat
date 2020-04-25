@@ -30,7 +30,7 @@ import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
-import  ChangeVendorModal  from '../../components/BuyMaterial/ChangeVendorModal';
+// import  AddProductModalTest  from '../../components/BuyMaterial/AddProductModalTest';
 
 interface TableProps {
   purchases: MaterialPurchase[];
@@ -153,7 +153,6 @@ const Buy = () => {
   const [pic, setPic] = React.useState('');
   const [setState]= React.useState(0);
   const [vendor, setVendor] = React.useState<Vendor[]>([]);
-  const [materialList, setMaterialList] = React.useState<Product[]>([]); //menuList is all loaded menu from db, which will be shown in AddMenuModal
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
   const [modalOpen, setModalOpen] = React.useState(false);
   const [txtSearch, setTxtSearch] = React.useState('');
@@ -165,22 +164,22 @@ const Buy = () => {
     contact: '',
     products: [],
   };
+
+  const defaultProduct : Product = {
+    name:'',
+    unit:'unit',
+    price:0,
+  };
   const [selectedVendor, setSelectedVendor] = React.useState<Vendor>(defaultVendor);
+  const [materialList, setMaterialList] = React.useState<Product[]>([]);
   const [loading, setLoading] = React.useState(false);
   const history = useHistory();
   const db = firebase.firestore();
 
 
-  const handleSearchVendor = (ev: any) => {
-    setTxtSearch(ev.target.value);
-    const temp = vendor.filter((item: any) =>
-      item.name.toLowerCase().includes(ev.target.value.toLowerCase())
-    );
-    setFilterVendor(temp);
-  };
-
   const handleChangeVendor = (ev : any) =>{
     setSelectedVendor(ev.target.value);
+    setMaterialList(selectedVendor.products);
   };
 
 
@@ -217,12 +216,24 @@ const Buy = () => {
     setLoading(false);
   };
 
-
   const renderVendorItems = () => {
     
     const result = vendor.map((item: any) => {
       return (
+        <MenuItem key={item.id} value={item.name}
+        onClick={() =>{setSelectedVendor(item)}} >{item.name}</MenuItem>
+       
+      );
+    });
+    return result;
+  };
+
+  const renderVendorProduct = () => {
+    
+    const result = materialList.map((item: any) => {
+      return (
         <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+       
       );
     });
     return result;
@@ -342,29 +353,6 @@ const Buy = () => {
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
-
-            {/* <Grid container justify='flex-start' alignItems='flex-end' direction='column'>
-              <Grid container justify='flex-end' alignItems='center'>
-                <div style={{ margin: '0px 32px' }}>
-                  <Typography variant='h6'>Vendor Selected</Typography>
-                  <Typography variant='body2' color='textSecondary'>
-                    Id: {selectedVendor.id}
-                  </Typography>
-                </div>
-                <div style={{ marginRight: 32 }}>
-                  <Typography variant='h6'>{selectedVendor.name}</Typography>
-                </div>
-                <Button
-                  disableRipple
-                  variant='contained'
-                  color='primary'
-                  onClick={() => setVendorModalOpen(true)}
-                >
-                  Change...
-                </Button>
-              </Grid>
-            </Grid> */}
-
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Vendor Name</InputLabel>
             <Select
@@ -380,6 +368,23 @@ const Buy = () => {
              {renderVendorItems()}
             </Select>
           </FormControl>
+            Vendor : {selectedVendor.name}
+
+            <FormControl variant='outlined'>
+            <InputLabel id='select-menu-type'>Vendor Product</InputLabel>
+            <Select
+              label='Vendor Name'
+              style={{ marginBottom: 20, width: 500 }}
+              value={selectedVendor}
+              onChange={handleChangeVendor}
+              variant='outlined'
+            >
+              <MenuItem value='Choose One' disabled>
+                - Choose One -
+              </MenuItem>
+             {renderVendorProduct()}
+            </Select>
+          </FormControl>  
           
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
            Ingredient Order
@@ -397,7 +402,7 @@ const Buy = () => {
             style={buttonStyle}
             onClick={addMaterial}
           >
-            <b>ADD INGREDIENT</b>
+            <b>ADD MATERIAL</b>
           </Button>
         </form>
       </div>
@@ -424,7 +429,7 @@ const Buy = () => {
 
       <AddProductModal
         open={modalOpen}
-        productList={materialList}
+        productList={selectedVendor.products}
         onClose={() => {
           setModalOpen(false);
         }}

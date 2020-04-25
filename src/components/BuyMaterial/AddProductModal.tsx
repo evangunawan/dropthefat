@@ -14,17 +14,18 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { Product } from '../../models/Product';
+import { Vendor } from '../../models/Vendor';
 
 interface ModalProps {
   open: boolean;
-  onClose: any;
+  onClose(): void;
   productList: Product[];
-  onProductAdd(item: Product): any;
+  onProductAdd(item: Product): void;
 }
 
 interface SuggestionProps {
   productList: Product[];
-  onProductAdd(item: Product): any;
+  onProductAdd(item: Product): void;
 }
 
 const SuggestionBox = (props: SuggestionProps) => {
@@ -36,13 +37,13 @@ const SuggestionBox = (props: SuggestionProps) => {
   };
 
   const renderItemList = () => {
-    const addProduct = (item: Product) => {
+    const addMenu = (item: Product) => {
       props.onProductAdd(item);
     };
 
     const result = props.productList.map((item, k) => {
       return (
-        <ListItem button key={k} onClick={() => addProduct(item)}>
+        <ListItem button key={k} onClick={() => addMenu(item)}>
           <ListItemText primary={item.name} />
         </ListItem>
       );
@@ -59,11 +60,12 @@ const SuggestionBox = (props: SuggestionProps) => {
 
 const AddProductModal = (props: ModalProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [productInput, setProductInput] = React.useState('');
+  const [menuInput, setMenuInput] = React.useState('');
   const [selectOpen, setSelectOpen] = React.useState(false);
-  const [productSelect, setProductSelect] = React.useState('all');
+  const [menuSelect, setMenuSelect] = React.useState('all');
   const [productList] = React.useState<Product[]>(props.productList);
   const [filteredList, setFilteredList] = React.useState<Product[]>(props.productList);
+//   const { vendor }=props;
 
   const modalStyle = {
     display: 'flex',
@@ -77,21 +79,21 @@ const AddProductModal = (props: ModalProps) => {
     width: 500,
   };
 
-  const filterProduct = (target: string) => {
+  const filterMenu = (target: string) => {
     if (target === 'all') {
       setFilteredList(productList);
     } else {
-      const tempList = productList.filter((product: Product) => {
-        return product.name === target;
+      const tempList = productList.filter((menu: Product) => {
+        return menu.name === target;
       });
       setFilteredList(tempList);
     }
   };
 
   const handleSelectChange = (ev: any) => {
-    setProductSelect(ev.target.value);
+    setMenuSelect(ev.target.value);
     // console.log(menuSelect);
-    filterProduct(ev.target.value);
+    filterMenu(ev.target.value);
   };
 
   return (
@@ -99,37 +101,9 @@ const AddProductModal = (props: ModalProps) => {
       <Fade in={props.open}>
         <Card style={cardStyle}>
           <CardContent>
-            <Typography variant='h6'>Add a Menu</Typography>
+            <Typography variant='h6'>Add a Product</Typography>
             <div style={{ marginTop: '16px' }}>
-              {/* <InputLabel>Category</InputLabel>
-              <Select
-                open={selectOpen}
-                onClose={() => {
-                  setSelectOpen(false);
-                }}
-                onOpen={() => {
-                  setSelectOpen(true);
-                }}
-                value={materialSelect}
-                onChange={handleSelectChange}
-                style={{ minWidth: '200px', margin: '8px 0px' }}
-              >
-                <MenuItem value='all'>All</MenuItem>
-                <MenuItem value='drink'>Drink</MenuItem>
-                <MenuItem value='main-course'>Main Course</MenuItem>
-                <MenuItem value='dessert'>Dessert</MenuItem>
-              </Select> */}
-              {/* //TODO: Add TextField filtering */}
-              {/* <TextField 
-                variant='outlined'
-                label='Search Menu' 
-                placeholder='Type a menu name' 
-                fullWidth 
-                value={menuInput}
-                onChange={handleInput}
-                style={{margin: '8px 0px'}}
-              /> */}
-
+              
               <Typography variant='body2' color='textSecondary'>
                 Please select an item:
               </Typography>
