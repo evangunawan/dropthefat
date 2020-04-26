@@ -14,7 +14,6 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { Product } from '../../models/Product';
-import { Vendor } from '../../models/Vendor';
 
 interface ModalProps {
   open: boolean;
@@ -79,21 +78,20 @@ const AddProductModal = (props: ModalProps) => {
     width: 500,
   };
 
-  const filterMenu = (target: string) => {
-    if (target === 'all') {
-      setFilteredList(productList);
-    } else {
-      const tempList = productList.filter((menu: Product) => {
-        return menu.name === target;
-      });
-      setFilteredList(tempList);
-    }
-  };
+  // const filterMenu = (target: string) => {
+  //   if (target === 'all') {
+  //     setFilteredList(productList);
+  //   } else {
+  //     const tempList = productList.filter((menu: Product) => {
+  //       return menu.name === target;
+  //     });
+  //     setFilteredList(tempList);
+  //   }
+  // };
 
   const handleSelectChange = (ev: any) => {
     setMenuSelect(ev.target.value);
     // console.log(menuSelect);
-    filterMenu(ev.target.value);
   };
 
   return (

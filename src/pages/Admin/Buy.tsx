@@ -240,8 +240,6 @@ const Buy = () => {
   };
 
   const addSelectedMaterial = (item: Product) => {
-    // const temp = [...items, item];
-    // setItems(temp);
     const newPurchase: MaterialPurchase = {
       product: item,
       quantity: 1,
@@ -335,8 +333,9 @@ const Buy = () => {
   }, [selectedVendor]);
 
   const addMaterial = () => {
-    setModalOpen(true);
+    // setModalOpen(true);
     // console.log(menuList);
+    addSelectedMaterial(selectedMaterial);
   };
 
   //Add selected menu from modal into table (state items)
@@ -387,6 +386,8 @@ const Buy = () => {
               {renderVendorProduct()}
             </Select>
           </FormControl>
+          Material : {selectedMaterial.name}
+
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Ingredient Order
           </Typography>
@@ -427,17 +428,6 @@ const Buy = () => {
           <b>Create Purchasement</b>
         </Button>
       </div>
-
-      <AddProductModal
-        open={modalOpen}
-        productList={selectedVendor.products}
-        onClose={() => {
-          setModalOpen(false);
-        }}
-        onProductAdd={(item) => {
-          addSelectedMaterial(item);
-        }}
-      />
       <FullScreenSpinner open={loading} />
     </Container>
   );
