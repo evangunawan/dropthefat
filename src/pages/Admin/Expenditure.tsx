@@ -2,8 +2,6 @@ import * as React from 'react';
 import Container from '../../components/Container';
 import {
   Typography,
-  TextField,
-  Button,
   Paper,
   TableContainer,
   Table,
@@ -18,11 +16,10 @@ import {
 } from '@material-ui/core';
 import { Expenditure } from '../../models/Expenditure';
 import { MenuOrder } from '../../models/MenuOrder';
-import { Add, List, Delete, Edit } from '@material-ui/icons';
+import { List } from '@material-ui/icons';
 import firebase from 'firebase';
 import ExpenditureModal from '../../components/ExpenditurePage/ExpenditureModal';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
-import { useHistory, useLocation } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
 
 const StyledTableCell = withStyles(() => ({
@@ -49,14 +46,10 @@ const TableHeader = () => {
 };
 
 const ExpenditureList = () => {
-  const history = useHistory();
-  const location = useLocation();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [txtSearch, setTxtSearch] = React.useState('');
   const [loading, setLoading] = React.useState(false);
-
   const [expenditure, setExpenditure] = React.useState<Expenditure[]>([]);
   const [filterExpenditure, setFilterExpenditure] = React.useState([] as any[]);
   const defaultExpenditure: Expenditure = {
@@ -64,9 +57,11 @@ const ExpenditureList = () => {
     menuOrders: [],
     pic: '',
     vendorName: '',
-    total: 0
-  }
-  const [selectedExpenditure, setSelectedExpenditure] = React.useState<Expenditure>(defaultExpenditure);
+    total: 0,
+  };
+  const [selectedExpenditure, setSelectedExpenditure] = React.useState<Expenditure>(
+    defaultExpenditure
+  );
 
   const searchBarStyle: React.CSSProperties = {
     display: 'flex',
@@ -103,7 +98,7 @@ const ExpenditureList = () => {
           doc.data().menuOrders.forEach((item: any) => {
             const newMenuOrder: MenuOrder = {
               menu: item.material,
-              quantity: item.quantity
+              quantity: item.quantity,
             };
             listMenuOrder.push(newMenuOrder);
           });
@@ -112,7 +107,7 @@ const ExpenditureList = () => {
             menuOrders: listMenuOrder,
             pic: doc.data().pic,
             vendorName: doc.data().vendor,
-            total: doc.data().total
+            total: doc.data().total,
           };
           result.push(newExpenditure);
           // console.log(doc.data());
@@ -146,7 +141,6 @@ const ExpenditureList = () => {
                   <List />
                 </IconButton>
               </Tooltip>
-              
             </TableCell>
           </TableRow>
         );

@@ -14,10 +14,6 @@ import {
   TablePagination,
   Paper,
 } from '@material-ui/core';
-// import { Vendor } from '../../models/Vendor';
-// import { Product } from '../../models/Product';
-// import { renderCurrency } from '../../util/RenderUtil';
-import { MenuOrder } from '../../models/MenuOrder';
 import { Expenditure } from '../../models/Expenditure';
 
 interface ModalProps {

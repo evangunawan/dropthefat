@@ -13,8 +13,6 @@ import {
   Description,
   RestaurantMenu,
   Home,
-  People,
-  Deck,
   Business,
   ShoppingCart,
   Receipt,

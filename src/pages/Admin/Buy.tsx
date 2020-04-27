@@ -12,8 +12,6 @@ import {
   TableCell,
   Button,
   IconButton,
-  Grid,
-  Box,
   FormControl,
   InputLabel,
   Select,
@@ -22,7 +20,6 @@ import {
 import { Delete } from '@material-ui/icons';
 import { Product } from '../../models/Product';
 import { Vendor } from '../../models/Vendor';
-import AddProductModal from '../../components/BuyMaterial/AddProductModal';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { MaterialPurchase } from '../../models/MaterialPurchase';
@@ -152,12 +149,8 @@ const MaterialTable = (props: TableProps) => {
 
 const Buy = () => {
   const [pic, setPic] = React.useState('');
-  const [setState] = React.useState(0);
   const [vendor, setVendor] = React.useState<Vendor[]>([]);
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
-  const [modalOpen, setModalOpen] = React.useState(false);
-  const [txtSearch, setTxtSearch] = React.useState('');
-  const [filterVendor, setFilterVendor] = React.useState([] as any[]);
   const defaultVendor: Vendor = {
     id: '',
     name: '',
@@ -235,7 +228,6 @@ const Buy = () => {
         });
       });
     setVendor(result);
-    setFilterVendor(result);
     setLoading(false);
     // console.log(result);
   };
@@ -272,9 +264,7 @@ const Buy = () => {
     });
 
     try {
-      var today = new Date(),
-            date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-      var d = renderTime(Date.now());
+      const d = renderTime(Date.now());
 
       await db.collection('purchasement').add({
         time: d,
@@ -392,7 +382,6 @@ const Buy = () => {
             </Select>
           </FormControl>
           Material : {selectedMaterial.name}
-
           <Typography variant='h5' style={{ padding: '16px 0px' }}>
             Ingredient Order
           </Typography>
