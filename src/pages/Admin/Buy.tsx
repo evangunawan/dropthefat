@@ -275,7 +275,7 @@ const Buy = () => {
         time: Date.now(),
         menuOrders: mPurchase,
         pic: pic || 'undefined',
-        vendor: vendor || 'undefined',
+        vendor: selectedVendor.name || 'undefined',
         total: grandTotal,
       });
       setLoading(false);
