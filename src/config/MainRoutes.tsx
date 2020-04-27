@@ -24,8 +24,8 @@ import UpdatePromo from '../pages/Admin/Promo/UpdatePromo';
 import EmployeeManagement from '../pages/Admin/Employee/EmployeeManagement';
 import CreateEmployee from '../pages/Admin/Employee/CreateEmployee';
 import UpdateEmployee from '../pages/Admin/Employee/UpdateEmployee';
-import Buy from '../pages/Admin/Buy';
-import Expenditure from '../pages/Admin/Expenditure';
+import Expenditure from '../pages/Admin/Purchasing/Expenditure';
+import BuyIngredients from '../pages/Admin/Purchasing/BuyIngredients';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -79,7 +79,7 @@ export default class MainRoutes extends React.Component {
                   path={`${match.url}/employees/update/:id`}
                   component={UpdateEmployee}
                 />
-                <Route path={`${match.url}/buy`} component={Buy} />
+                <Route path={`${match.url}/ingredients`} component={BuyIngredients} />
               </div>
             )}
           />

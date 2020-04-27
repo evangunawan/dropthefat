@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Container from '../../components/Container';
+import Container from '../../../components/Container';
 import {
   TextField,
   Typography,
@@ -18,16 +18,16 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
-import { Product } from '../../models/Product';
-import { Vendor } from '../../models/Vendor';
+import { Product } from '../../../models/Product';
+import { Vendor } from '../../../models/Vendor';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-import { MaterialPurchase } from '../../models/MaterialPurchase';
+import { MaterialPurchase } from '../../../models/MaterialPurchase';
 import { Add } from '@material-ui/icons';
-import FullScreenSpinner from '../../components/FullScreenSpinner';
+import FullScreenSpinner from '../../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
-import { renderCurrency } from '../../util/RenderUtil';
-import { renderTime } from '../../util/RenderUtil';
+import { renderCurrency } from '../../../util/RenderUtil';
+import { renderTime } from '../../../util/RenderUtil';
 // import  AddProductModalTest  from '../../components/BuyMaterial/AddProductModalTest';
 
 interface TableProps {
@@ -62,6 +62,12 @@ const MaterialTable = (props: TableProps) => {
     return result;
   };
 
+  const renderUnitType = (val: String) => {
+    if (val === 'kg') return 'Kilogram (kg)';
+    else if (val === 'liter') return 'Liter (cc)';
+    else if (val === 'unit') return 'Unit (pcs)';
+  };
+
   const renderMenuItems = (items: MaterialPurchase[]) => {
     return items.map((item, k) => {
       return (
@@ -76,6 +82,7 @@ const MaterialTable = (props: TableProps) => {
               onChange={(ev) => handleQuantityChange(ev, item)}
             />
           </TableCell>
+          <TableCell>{renderUnitType(item.product.unit)}</TableCell>
           <TableCell>{renderCurrency(renderPrice(item))}</TableCell>
           <TableCell style={{ width: 60 }}>
             <IconButton
@@ -122,6 +129,9 @@ const MaterialTable = (props: TableProps) => {
               <b>Quantity</b>
             </TableCell>
             <TableCell>
+              <b>Unit</b>
+            </TableCell>
+            <TableCell>
               <b>Total</b>
             </TableCell>
             <TableCell>
@@ -132,12 +142,12 @@ const MaterialTable = (props: TableProps) => {
         <TableBody>
           {renderTableBody(props.purchases)}
           <TableRow style={{ backgroundColor: '#111' }}>
-            <TableCell colSpan={5}>
+            <TableCell colSpan={4}>
               <Typography align='right' variant='body2'>
                 <b>Grand Total</b>
               </Typography>
             </TableCell>
-            <TableCell>
+            <TableCell colSpan={2}>
               <b>{renderCurrency(renderGrandTotal(props.purchases))}</b>
             </TableCell>
           </TableRow>
@@ -147,7 +157,7 @@ const MaterialTable = (props: TableProps) => {
   );
 };
 
-const Buy = () => {
+const BuyIngredients = () => {
   const [pic, setPic] = React.useState('');
   const [vendor, setVendor] = React.useState<Vendor[]>([]);
   const [purchase, setPurchase] = React.useState<MaterialPurchase[]>([]); //Orders that added in the table.
@@ -158,7 +168,6 @@ const Buy = () => {
     contact: '',
     products: [],
   };
-
   const defaultProduct: Product = {
     name: '',
     unit: 'unit',
@@ -265,7 +274,6 @@ const Buy = () => {
 
     try {
       const d = renderTime(Date.now());
-
       await db.collection('purchasement').add({
         time: d,
         menuOrders: mPurchase,
@@ -274,6 +282,7 @@ const Buy = () => {
         total: grandTotal,
       });
       setLoading(false);
+      history.push('/admin/expenditure');
     } catch (err) {
       console.error(err);
     }
@@ -349,12 +358,14 @@ const Buy = () => {
             fullWidth
             label='Person in charge'
             variant='outlined'
+            style={{ marginBottom: 20 }}
             value={pic}
             onChange={(ev) => setPic(ev.target.value)}
           />
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Vendor Name</InputLabel>
             <Select
+              label='Vendor Name'
               style={{ marginBottom: 20, width: 500 }}
               value={selectedVendor}
               onChange={handleChangeVendor}
@@ -366,10 +377,13 @@ const Buy = () => {
               {renderVendorItems()}
             </Select>
           </FormControl>
-          Vendor : {selectedVendor.name}
+          <Typography variant='subtitle1' style={{ marginBottom: 20 }}>
+            <b>Selected Vendor:</b> {selectedVendor.name}
+          </Typography>
           <FormControl variant='outlined'>
             <InputLabel id='select-menu-type'>Vendor Product</InputLabel>
             <Select
+              label='Vendor Product'
               style={{ marginBottom: 20, width: 500 }}
               value={selectedMaterial}
               onChange={handleChangeMaterial}
@@ -381,18 +395,12 @@ const Buy = () => {
               {renderVendorProduct()}
             </Select>
           </FormControl>
-          Material : {selectedMaterial.name}
-          <Typography variant='h5' style={{ padding: '16px 0px' }}>
-            Ingredient Order
+          <Typography variant='subtitle1' style={{ marginBottom: 20 }}>
+            <b>Selected Material:</b> {selectedMaterial.name}
           </Typography>
-          <MaterialTable
-            purchases={purchase}
-            onDelete={(item) => removeMaterial(item)}
-            onQtyChange={(ev, item) => handleQtyChange(ev, item)}
-          />
           <Button
             variant='text'
-            color='secondary'
+            color='primary'
             startIcon={<Add />}
             disableRipple
             style={buttonStyle}
@@ -400,6 +408,14 @@ const Buy = () => {
           >
             <b>ADD MATERIAL</b>
           </Button>
+          <Typography variant='h5' style={{ padding: '16px 0px' }}>
+            Ingredient Order List
+          </Typography>
+          <MaterialTable
+            purchases={purchase}
+            onDelete={(item) => removeMaterial(item)}
+            onQtyChange={(ev, item) => handleQtyChange(ev, item)}
+          />
         </form>
       </div>
       <div style={btnGroupStyle}>
@@ -416,7 +432,7 @@ const Buy = () => {
         <Button
           variant='contained'
           color='primary'
-          disabled={purchase.length < 1}
+          disabled={purchase.length < 1 || pic.length < 2}
           onClick={createPurchase}
         >
           <b>Create Purchasement</b>
@@ -427,4 +443,4 @@ const Buy = () => {
   );
 };
 
-export default Buy;
+export default BuyIngredients;
