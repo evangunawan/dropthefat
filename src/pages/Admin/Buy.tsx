@@ -30,6 +30,7 @@ import { Add } from '@material-ui/icons';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory } from 'react-router-dom';
 import { renderCurrency } from '../../util/RenderUtil';
+import { renderTime } from '../../util/RenderUtil';
 // import  AddProductModalTest  from '../../components/BuyMaterial/AddProductModalTest';
 
 interface TableProps {
@@ -272,10 +273,11 @@ const Buy = () => {
 
     try {
       var today = new Date(),
-            date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+      var d = renderTime(Date.now());
 
       await db.collection('purchasement').add({
-        time: date,
+        time: d,
         menuOrders: mPurchase,
         pic: pic || 'undefined',
         vendor: selectedVendor.name || 'undefined',

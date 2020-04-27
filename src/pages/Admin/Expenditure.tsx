@@ -23,6 +23,7 @@ import firebase from 'firebase';
 import ExpenditureModal from '../../components/ExpenditurePage/ExpenditureModal';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
 import { useHistory, useLocation } from 'react-router-dom';
+import { renderCurrency } from '../../util/RenderUtil';
 
 const StyledTableCell = withStyles(() => ({
   head: {
@@ -88,8 +89,6 @@ const ExpenditureList = () => {
     setPage(0);
   };
 
-  
-
   const fetchExpenditure = async () => {
     const db = firebase.firestore();
     const result: Expenditure[] = [];
@@ -133,7 +132,7 @@ const ExpenditureList = () => {
           <TableRow key={k}>
             <TableCell>{item.time}</TableCell>
             <TableCell>{item.vendorName}</TableCell>
-            <TableCell>{item.total}</TableCell>
+            <TableCell>{renderCurrency(item.total)}</TableCell>
             <TableCell style={{ textAlign: 'center' }}>
               <Tooltip title='View Products' arrow>
                 <IconButton
