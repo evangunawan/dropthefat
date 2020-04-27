@@ -13,7 +13,6 @@ import TableManagement from '../pages/Admin/Tables/TableManagement';
 import MenuManagement from '../pages/Admin/Menu/MenuManagement';
 import CreateMenu from '../pages/Admin/Menu/CreateMenu';
 import UpdateMenu from '../pages/Admin/Menu/UpdateMenu';
-import ManageExpenditure from '../pages/Expenditure/ManageExpenditure';
 import AddIngredient from '../pages/Expenditure/AddIngredient';
 import DeleteIngredient from '../pages/Expenditure/DeleteIngredient';
 import VendorManagement from '../pages/Admin/Vendor/VendorManagement';
@@ -23,6 +22,7 @@ import PromoManagement from '../pages/Admin/Promo/PromoManagement';
 import CreatePromo from '../pages/Admin/Promo/CreatePromo';
 import UpdatePromo from '../pages/Admin/Promo/UpdatePromo';
 import Buy from '../pages/Admin/Buy';
+import Expenditure from '../pages/Admin/Expenditure';
 
 export default class MainRoutes extends React.Component {
   render() {
@@ -54,7 +54,7 @@ export default class MainRoutes extends React.Component {
                 <Route exact path={`${match.url}/menu`} component={MenuManagement} />
                 <Route path={`${match.url}/menu/update/:id`} component={UpdateMenu} />
                 <Route path={`${match.url}/menu/create`} component={CreateMenu} />
-                <Route path={`${match.url}/expenditure`} component={ManageExpenditure} />
+                <Route path={`${match.url}/expenditure`} component={Expenditure} />
                 <Route path={`${match.url}/expenditure/add`} component={AddIngredient} />
                 <Route
                   path={`${match.url}/expenditure/delete`}

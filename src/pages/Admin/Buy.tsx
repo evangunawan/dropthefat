@@ -271,8 +271,11 @@ const Buy = () => {
     });
 
     try {
+      var today = new Date(),
+            date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+
       await db.collection('purchasement').add({
-        time: Date.now(),
+        time: date,
         menuOrders: mPurchase,
         pic: pic || 'undefined',
         vendor: selectedVendor.name || 'undefined',
