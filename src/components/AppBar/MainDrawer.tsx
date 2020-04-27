@@ -16,7 +16,7 @@ import {
   People,
   // Deck,
   Business,
-  // ShoppingCart,
+  ShoppingCart,
   Receipt,
   EventSeat,
   Loyalty,
@@ -102,6 +102,13 @@ const MainDrawer = (props: DrawerProps) => {
             text='Expenditure'
             link='/admin/expenditure'
             icon={<Receipt />}
+            onLink={props.onClose}
+          />
+
+          <DrawerItem
+            text='Buy Ingredients'
+            link='/admin/buy'
+            icon={<ShoppingCart />}
             onLink={props.onClose}
           />
         </List>

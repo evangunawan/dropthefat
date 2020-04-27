@@ -149,6 +149,7 @@ const TableManagement = () => {
   React.useEffect(() => {
     fetchTables();
     fetchReservations();
+    // eslint-disable-next-line
   }, []);
 
   return (
