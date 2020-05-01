@@ -107,7 +107,7 @@ const MainDrawer = (props: DrawerProps) => {
 
           <DrawerItem
             text='Buy Ingredients'
-            link='/admin/buy'
+            link='/admin/ingredients'
             icon={<ShoppingCart />}
             onLink={props.onClose}
           />

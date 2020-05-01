@@ -64,11 +64,11 @@ const LoginAdmin = () => {
     }
   };
 
-  const setToken = async (token: string) => {
+  const addTokenToDb = async (newToken: string) => {
     const db = firebase.firestore();
     const adminRef = db.collection('admin').doc('account');
     await adminRef.update({
-      token: token,
+      token: firebase.firestore.FieldValue.arrayUnion(newToken),
     });
   };
 
@@ -89,7 +89,7 @@ const LoginAdmin = () => {
     if (md5(txtPassword) === adminPass) {
       const token = generateToken(8);
       cookie.set('admin_token', token, { path: '/' });
-      await setToken(token);
+      await addTokenToDb(token);
       console.log('set token to cookie: ' + token);
       history.push('/admin/dashboard');
     } else {

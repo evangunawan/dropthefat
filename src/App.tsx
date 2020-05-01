@@ -7,7 +7,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { blue, pink } from '@material-ui/core/colors';
 import MainAppBar from './components/AppBar/MainAppBar';
 import { BrowserRouter as Router } from 'react-router-dom';
-import MainRoutes from './config/MainRoutes';
+import MainRoutes from './components/MainRoutes';
 
 //Firebase initialization
 if (!firebase.apps.length) {

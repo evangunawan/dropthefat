@@ -17,9 +17,9 @@ const MainAppBar = () => {
     const db = firebase.firestore();
     const adminRef = db.collection('admin').doc('account');
     await adminRef.update({
-      token: '',
+      token: firebase.firestore.FieldValue.arrayRemove(cookie.get('admin_token')),
     });
-    cookie.set('admin_token', '');
+    cookie.set('admin_token', '', { path: '/' });
     history.push('/admin/login');
   };
 
