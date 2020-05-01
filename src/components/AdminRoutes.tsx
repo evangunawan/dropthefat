@@ -15,6 +15,7 @@ import CreateVendor from '../pages/Admin/Vendor/CreateVendor';
 import EmployeeManagement from '../pages/Admin/Employee/EmployeeManagement';
 import CreateEmployee from '../pages/Admin/Employee/CreateEmployee';
 import UpdateEmployee from '../pages/Admin/Employee/UpdateEmployee';
+import ExpenditureList from '../pages/Admin/Purchasing/Expenditure';
 import BuyIngredients from '../pages/Admin/Purchasing/BuyIngredients';
 import { checkAuth } from '../util/AuthUtil';
 
@@ -54,6 +55,7 @@ const AdminRoutes = () => {
           <Route exact path={`${match.url}/employees`} component={EmployeeManagement} />
           <Route path={`${match.url}/employees/create`} component={CreateEmployee} />
           <Route path={`${match.url}/employees/update/:id`} component={UpdateEmployee} />
+          <Route path={`${match.url}/expenditure`} component={ExpenditureList} />
           <Route path={`${match.url}/ingredients`} component={BuyIngredients} />
         </div>
       )}

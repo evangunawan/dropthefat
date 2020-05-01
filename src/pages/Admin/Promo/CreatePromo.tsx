@@ -4,7 +4,7 @@ import firebase from 'firebase';
 import '@firebase/firestore';
 // import { startOfDay } from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
-import { Typography, TextField, Button } from '@material-ui/core';
+import { Typography, TextField, Button, Slider } from '@material-ui/core';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 import Container from '../../../components/Container';
@@ -16,16 +16,31 @@ const fieldBody: React.CSSProperties = {
   alignItems: 'center',
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: 30,
-  margin: '30px 0px',
+  padding: 20,
   width: 500,
+};
+
+const formBody: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  padding: 30,
+  margin: '20px 0px',
+  width: 500,
+};
+
+const dateFieldStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 };
 
 const CreatePromo = () => {
   const history = useHistory();
   const [promoCodeId, setPromoCodeId] = React.useState('');
   const [promoTitle, setPromoTitle] = React.useState('');
-  const [promoDiscount, setPromoDiscount] = React.useState('');
+  const [promoDiscount, setPromoDiscount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
 
   const [selectedStartedDate, setSelectedStartedDate] = React.useState<Date | null>(
@@ -48,12 +63,16 @@ const CreatePromo = () => {
       title: promoTitle,
       startDate: selectedStartedDate?.getTime(),
       expiredDate: selectedExpiredDate?.getTime(),
-      discount: parseFloat(promoDiscount),
+      discount: promoDiscount / 100,
       deleted: false,
     });
 
     setLoading(false);
     history.push('/admin/promo');
+  };
+
+  const handleSliderChange = (event: any, value: any) => {
+    setPromoDiscount(value);
   };
 
   return (
@@ -62,9 +81,9 @@ const CreatePromo = () => {
         <Typography variant='h4' component='h4'>
           Promo Management
         </Typography>
-        <fieldset style={fieldBody}>
+        <fieldset style={formBody}>
           <legend style={{ width: 150, display: 'flex', justifyContent: 'center' }}>
-            Add New Menu
+            Add New Promo
           </legend>
           <TextField
             variant='outlined'
@@ -81,47 +100,57 @@ const CreatePromo = () => {
             value={promoTitle}
             onChange={(ev) => setPromoTitle(ev.target.value)}
           />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant='inline'
-              margin='normal'
-              format='MM/dd/yyyy'
-              id='date-picker-inline'
-              label='Starting DAte'
-              value={selectedStartedDate}
-              onChange={handleDateChange}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-            <KeyboardDatePicker
-              disableToolbar
-              variant='inline'
-              margin='normal'
-              format='MM/dd/yyyy'
-              id='date-picker-inline'
-              label='Expired Date'
-              value={selectedExpiredDate}
-              onChange={handleStartedDateChange}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-          </MuiPickersUtilsProvider>
-          <TextField
-            margin='normal'
-            variant='outlined'
-            label='Discount'
+          <div style={dateFieldStyle}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant='inline'
+                margin='normal'
+                format='MM/dd/yyyy'
+                id='date-picker-inline'
+                label='Start Date'
+                value={selectedStartedDate}
+                onChange={handleDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+              <KeyboardDatePicker
+                disableToolbar
+                variant='inline'
+                margin='normal'
+                format='MM/dd/yyyy'
+                id='date-picker-inline'
+                label='Expired Date'
+                value={selectedExpiredDate}
+                onChange={handleStartedDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </div>
+          <Typography id='discrete-slider' gutterBottom style={{ marginTop: 20 }}>
+            Discount (%)
+          </Typography>
+          <Slider
+            defaultValue={0}
+            aria-labelledby='discrete-slider'
+            valueLabelDisplay='auto'
+            step={10}
+            marks
+            min={0}
+            max={100}
             style={{ marginBottom: 20, width: 500 }}
-            value={promoDiscount}
-            onChange={(ev) => setPromoDiscount(ev.target.value)}
+            value={typeof promoDiscount === 'number' ? promoDiscount : 0}
+            onChange={handleSliderChange}
           />
           <Button
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
             onClick={addPromoToFirebase}
+            disabled={promoDiscount === 0 || promoTitle === '' || promoCodeId === ''}
           >
             ADD
           </Button>

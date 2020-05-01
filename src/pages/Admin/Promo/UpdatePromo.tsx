@@ -5,7 +5,7 @@ import '@firebase/firestore';
 import Container from '../../../components/Container';
 import DateFnsUtils from '@date-io/date-fns';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { Typography, TextField, Button } from '@material-ui/core';
+import { Typography, TextField, Button, Slider } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Promo } from '../../../models/Promo';
 import FullScreenSpinner from '../../../components/FullScreenSpinner';
@@ -15,9 +15,24 @@ const fieldBody: React.CSSProperties = {
   alignItems: 'center',
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: 30,
-  margin: '30px 0px',
+  padding: 20,
   width: 500,
+};
+
+const formBody: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  padding: 30,
+  margin: '20px 0px',
+  width: 500,
+};
+
+const dateFieldStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 };
 
 const UpdatePromo = () => {
@@ -26,7 +41,7 @@ const UpdatePromo = () => {
   const [promoId, setPromoId] = React.useState('');
   const [promoCodeId, setPromoCodeId] = React.useState('');
   const [promoTitle, setPromoTitle] = React.useState('');
-  const [promoDiscount, setPromoDiscount] = React.useState('');
+  const [promoDiscount, setPromoDiscount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
 
   const [selectedStartedDate, setSelectedStartedDate] = React.useState<Date | null>();
@@ -55,7 +70,7 @@ const UpdatePromo = () => {
     setPromoId(promoId);
     setPromoCodeId(result.codeId);
     setPromoTitle(result.title);
-    setPromoDiscount(String(result.discount));
+    setPromoDiscount(result.discount * 100);
     setSelectedStartedDate(new Date(result.startDate));
     setSelectedExpiredDate(new Date(result.expiredDate));
     setLoading(false);
@@ -71,29 +86,33 @@ const UpdatePromo = () => {
         title: promoTitle,
         startDate: selectedStartedDate?.getTime(),
         expiredDate: selectedExpiredDate?.getTime(),
-        discount: parseFloat(promoDiscount),
+        discount: promoDiscount / 100,
       });
     setLoading(false);
     history.push('/admin/promo');
   };
-  React.useEffect(() => {
-    fetchPromo(id || 'null');
-
-    // eslint-disable-next-line
-  }, []);
   const handleDateChange = (date: Date | null) => {
     setSelectedStartedDate(date);
   };
   const handleStartedDateChange = (date: Date | null) => {
     setSelectedExpiredDate(date);
   };
+  const handleSliderChange = (event: any, value: any) => {
+    setPromoDiscount(value);
+  };
+
+  React.useEffect(() => {
+    fetchPromo(id || 'null');
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <Container width='500px'>
       <div style={fieldBody}>
         <Typography variant='h4' component='h4'>
           Promo Management
         </Typography>
-        <fieldset style={fieldBody}>
+        <fieldset style={formBody}>
           <legend style={{ width: 150, display: 'flex', justifyContent: 'center' }}>
             Update Promo
           </legend>
@@ -113,47 +132,57 @@ const UpdatePromo = () => {
             onChange={(ev) => setPromoTitle(ev.target.value)}
           ></TextField>
 
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant='inline'
-              margin='normal'
-              format='MM/dd/yyyy'
-              id='date-picker-inline'
-              label='Starting DAte'
-              value={selectedStartedDate}
-              onChange={handleDateChange}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-            <KeyboardDatePicker
-              disableToolbar
-              variant='inline'
-              margin='normal'
-              format='MM/dd/yyyy'
-              id='date-picker-inline'
-              label='Expired Date'
-              value={selectedExpiredDate}
-              onChange={handleStartedDateChange}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-          </MuiPickersUtilsProvider>
-          <TextField
-            margin='normal'
-            variant='outlined'
-            label='Discount'
+          <div style={dateFieldStyle}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant='inline'
+                margin='normal'
+                format='MM/dd/yyyy'
+                id='date-picker-inline'
+                label='Start Date'
+                value={selectedStartedDate}
+                onChange={handleDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+              <KeyboardDatePicker
+                disableToolbar
+                variant='inline'
+                margin='normal'
+                format='MM/dd/yyyy'
+                id='date-picker-inline'
+                label='Expired Date'
+                value={selectedExpiredDate}
+                onChange={handleStartedDateChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </div>
+          <Typography id='discrete-slider' gutterBottom style={{ marginTop: 20 }}>
+            Discount (%)
+          </Typography>
+          <Slider
+            defaultValue={0}
+            aria-labelledby='discrete-slider'
+            valueLabelDisplay='auto'
+            step={10}
+            marks
+            min={0}
+            max={100}
             style={{ marginBottom: 20, width: 500 }}
-            value={promoDiscount}
-            onChange={(ev) => setPromoDiscount(ev.target.value)}
+            value={typeof promoDiscount === 'number' ? promoDiscount : 0}
+            onChange={handleSliderChange}
           />
           <Button
             variant='contained'
             color='primary'
             style={{ marginBottom: 20, width: 500, height: 50 }}
             onClick={() => updatePromo(id || 'null')}
+            disabled={promoDiscount === 0 || promoTitle === '' || promoCodeId === ''}
           >
             UPDATE
           </Button>

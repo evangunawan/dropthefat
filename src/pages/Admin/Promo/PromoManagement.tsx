@@ -146,7 +146,9 @@ const PromoManagement = () => {
             <TableCell>{item.title}</TableCell>
             <TableCell>{renderTime(item.startDate)}</TableCell>
             <TableCell>{renderTime(item.expiredDate)}</TableCell>
-            <TableCell>{renderDiscount(item.discount)}</TableCell>
+            <TableCell style={{ textAlign: 'center' }}>
+              {renderDiscount(item.discount)}
+            </TableCell>
             <TableCell style={{ textAlign: 'center' }}>
               <Button color='primary' onClick={() => updatePromo(item)}>
                 Update
@@ -163,14 +165,14 @@ const PromoManagement = () => {
     return result;
   };
   return (
-    <Container width='1000px'>
+    <Container width='1150px'>
       <div style={searchBarStyle}>
         <Typography variant='h4' component='h4'>
           Promo Management
         </Typography>
         <form>
           <TextField
-            label='Search Menu'
+            label='Search Promo Code'
             variant='outlined'
             value={txtSearch}
             onChange={(ev) => handleSearchPromo(ev)}

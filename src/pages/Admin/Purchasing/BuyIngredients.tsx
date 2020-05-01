@@ -424,7 +424,7 @@ const BuyIngredients = () => {
           color='default'
           style={{ marginRight: 8 }}
           onClick={() => {
-            history.push('/buy');
+            history.push('/admin/dashboard');
           }}
         >
           <b>Cancel</b>

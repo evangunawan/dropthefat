@@ -122,17 +122,19 @@ const MainDrawer = (props: DrawerProps) => {
         <List>
           <DrawerItem text='Home' link='/' icon={<Home />} onLink={props.onClose} />
         </List>
-        <List subheader={<ListSubheader>Waiters</ListSubheader>}>
-          <DrawerItem
-            text='Order'
-            link='/order'
-            icon={<Description />}
-            onLink={props.onClose}
-          />
+        <List subheader={<ListSubheader>View</ListSubheader>}>
           <DrawerItem
             text='Food Menu'
             link='/menu'
             icon={<RestaurantMenu />}
+            onLink={props.onClose}
+          />
+        </List>
+        <List subheader={<ListSubheader>Transaction</ListSubheader>}>
+          <DrawerItem
+            text='Order'
+            link='/order'
+            icon={<Description />}
             onLink={props.onClose}
           />
           <DrawerItem
