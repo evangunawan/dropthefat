@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { DiningTable } from '../../models/DiningTable';
 import ChangeTableModal from '../../components/OrderPage/ChangeTableModal';
 import FullScreenSpinner from '../../components/FullScreenSpinner';
+import VerificationModal from '../../components/VerificationModal';
 
 const CreateReservation = () => {
   const [pic, setPic] = React.useState('');
@@ -26,6 +27,7 @@ const CreateReservation = () => {
   const [tableMessage, setTableMessage] = React.useState('');
   const [tableModalOpen, setTableModalOpen] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
+  const [verifModalOpen, setVerifModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const history = useHistory();
 
@@ -225,7 +227,7 @@ const CreateReservation = () => {
           variant='contained'
           color='primary'
           disabled={false}
-          onClick={createReservation}
+          onClick={() => setVerifModalOpen(true)}
         >
           <b>Create</b>
         </Button>
@@ -238,6 +240,15 @@ const CreateReservation = () => {
         onTableSelect={(item: DiningTable) => setSelectedTable(item)}
       />
       <FullScreenSpinner open={loading} />
+      <VerificationModal
+        open={verifModalOpen}
+        onClose={() => setVerifModalOpen(false)}
+        roleType={['waiter', 'waitress']}
+        onSuccess={() => {
+          setVerifModalOpen(false);
+          createReservation();
+        }}
+      />
     </Container>
   );
 };

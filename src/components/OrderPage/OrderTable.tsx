@@ -21,6 +21,7 @@ import { renderCurrency, renderTime } from '../../util/RenderUtil';
 import PaymentModal from './PaymentModal';
 import FullScreenSpinner from '../FullScreenSpinner';
 import TransactionModal from './TransactionModal';
+import VerificationModal from '../VerificationModal';
 
 interface TableProps {
   items: Order[];
@@ -48,6 +49,8 @@ const OrderTable = (props: TableProps) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = React.useState(false);
   const [transactionModal, setTransactionModal] = React.useState(false);
+  const [verifModalOpen, setVerifModalOpen] = React.useState(false);
+  const [submitCode, setSubmitCode] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
   const defaultOrder: Order = {
@@ -88,7 +91,6 @@ const OrderTable = (props: TableProps) => {
   const handlePaymentSubmit = async (code: string) => {
     const db = firebase.firestore();
     setLoading(true);
-
     //Update the order document status to completed
     console.log('Updating Order ' + modalItem.id);
     await db
@@ -220,13 +222,25 @@ const OrderTable = (props: TableProps) => {
         order={modalItem}
         onClose={() => setPaymentModalOpen(false)}
         onSubmit={(code) => {
-          handlePaymentSubmit(code);
+          setPaymentModalOpen(false);
+          setSubmitCode(code);
+          setVerifModalOpen(true);
+          // handlePaymentSubmit(code);
         }}
       />
       <TransactionModal
         open={transactionModal}
         order={modalItem}
         onClose={() => setTransactionModal(false)}
+      />
+      <VerificationModal
+        open={verifModalOpen}
+        onClose={() => setVerifModalOpen(false)}
+        onSuccess={() => {
+          setVerifModalOpen(false);
+          handlePaymentSubmit(submitCode);
+        }}
+        roleType={['cashier']}
       />
     </div>
   );

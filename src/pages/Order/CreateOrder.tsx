@@ -28,6 +28,7 @@ import { renderCurrency } from '../../util/RenderUtil';
 import { DiningTable } from '../../models/DiningTable';
 import ChangeTableModal from '../../components/OrderPage/ChangeTableModal';
 import { Reservation } from '../../models/Reservation';
+import VerificationModal from '../../components/VerificationModal';
 
 interface TableProps {
   orders: MenuOrder[];
@@ -164,6 +165,7 @@ const CreateOrder = () => {
   const [tableMessage, setTableMessage] = React.useState(''); //State to save message and error message under selected table.
   const [modalOpen, setModalOpen] = React.useState(false);
   const [tableModalOpen, setTableModalOpen] = React.useState(false);
+  const [verifModalOpen, setVerifModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   // const [reservation, setReservation] = React.useState<Reservation>({} as Reservation);
   const db = firebase.firestore();
@@ -371,6 +373,10 @@ const CreateOrder = () => {
     }
   };
 
+  const verifyCreateOrder = () => {
+    setVerifModalOpen(true);
+  };
+
   const handleQtyChange = (ev: any, item: MenuOrder) => {
     const temp = [...orders];
     const index = temp.indexOf(item);
@@ -542,7 +548,8 @@ const CreateOrder = () => {
             guests === 0 ||
             selectedTable.tableNumber === 0
           }
-          onClick={createOrder}
+          // onClick={createOrder}
+          onClick={verifyCreateOrder}
         >
           <b>Create Order</b>
         </Button>
@@ -563,6 +570,15 @@ const CreateOrder = () => {
         guests={guests}
         onClose={() => setTableModalOpen(false)}
         onTableSelect={(item: DiningTable) => setSelectedTable(item)}
+      />
+      <VerificationModal
+        open={verifModalOpen}
+        onClose={() => setVerifModalOpen(false)}
+        onSuccess={() => {
+          setVerifModalOpen(false);
+          createOrder();
+        }}
+        roleType={['waiter', 'waitress']}
       />
       <FullScreenSpinner open={loading} />
     </Container>
